@@ -1,352 +1,355 @@
-/* eslint-disable @typescript-eslint/no-explicit-any, react-hooks/exhaustive-deps, no-console */
+/* eslint-disable no-console,react-hooks/exhaustive-deps */
 
 'use client';
 
-import { ChevronRight } from 'lucide-react';
-import Link from 'next/link';
-import { Suspense, useEffect, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
+import { Suspense } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
-// 客戶端收藏 API
-import {
-  clearAllFavorites,
-  getAllFavorites,
-  getAllPlayRecords,
-  subscribeToDataUpdates,
-} from '@/lib/db.client';
 import { getDoubanCategories } from '@/lib/douban.client';
 import { DoubanItem } from '@/lib/types';
 
-import CapsuleSwitch from '@/components/CapsuleSwitch';
-import ContinueWatching from '@/components/ContinueWatching';
+import DoubanCardSkeleton from '@/components/DoubanCardSkeleton';
+import DoubanSelector from '@/components/DoubanSelector';
 import PageLayout from '@/components/PageLayout';
-import ScrollableRow from '@/components/ScrollableRow';
-import { useSite } from '@/components/SiteProvider';
 import VideoCard from '@/components/VideoCard';
 
-function HomeClient() {
-  const [activeTab, setActiveTab] = useState<'home' | 'favorites'>('home');
-  const [hotMovies, setHotMovies] = useState<DoubanItem[]>([]);
-  const [hotTvShows, setHotTvShows] = useState<DoubanItem[]>([]);
-  const [loading, setLoading] = useState(true);
-  const { announcement } = useSite();
+function DoubanPageClient() {
+  const searchParams = useSearchParams();
+  const [doubanData, setDoubanData] = useState<DoubanItem[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [currentPage, setCurrentPage] = useState(0);
+  const [hasMore, setHasMore] = useState(true);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const [selectorsReady, setSelectorsReady] = useState(false);
+  const observerRef = useRef<IntersectionObserver | null>(null);
+  const loadingRef = useRef<HTMLDivElement>(null);
+  const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  const [showAnnouncement, setShowAnnouncement] = useState(false);
+  const type = searchParams.get('type') || 'movie';
 
-  // 檢查公告彈窗狀態
+  // 選擇器狀態 - 完全獨立，不依賴URL參數
+  const [primarySelection, setPrimarySelection] = useState<string>(() => {
+    return type === 'movie' ? '热门' : '';
+  });
+  const [secondarySelection, setSecondarySelection] = useState<string>(() => {
+    if (type === 'movie') return '全部';
+    if (type === 'tv') return 'tv';
+    if (type === 'show') return 'show';
+    return '全部';
+  });
+
+  // 初始化時標記選擇器為準備好狀態
   useEffect(() => {
-    if (typeof window !== 'undefined' && announcement) {
-      const hasSeenAnnouncement = localStorage.getItem('hasSeenAnnouncement');
-      if (hasSeenAnnouncement !== announcement) {
-        setShowAnnouncement(true);
-      } else {
-        setShowAnnouncement(Boolean(!hasSeenAnnouncement && announcement));
-      }
+    // 短暫延遲確保初始狀態設置完成
+    const timer = setTimeout(() => {
+      setSelectorsReady(true);
+    }, 50);
+
+    return () => clearTimeout(timer);
+  }, []); // 只在組件掛載時執行一次
+
+  // type變化時立即重置selectorsReady（最高優先級）
+  useEffect(() => {
+    setSelectorsReady(false);
+    setLoading(true); // 立即顯示loading狀態
+  }, [type]);
+
+  // 當type變化時重置選擇器狀態
+  useEffect(() => {
+    // 批量更新選擇器狀態
+    if (type === 'movie') {
+      setPrimarySelection('热门');
+      setSecondarySelection('全部');
+    } else if (type === 'tv') {
+      setPrimarySelection('');
+      setSecondarySelection('tv');
+    } else if (type === 'show') {
+      setPrimarySelection('');
+      setSecondarySelection('show');
+    } else {
+      setPrimarySelection('');
+      setSecondarySelection('全部');
     }
-  }, [announcement]);
 
-  // 收藏夾數據
-  type FavoriteItem = {
-    id: string;
-    source: string;
-    title: string;
-    poster: string;
-    episodes: number;
-    source_name: string;
-    currentEpisode?: number;
-    search_title?: string;
-  };
+    // 使用短暫延遲確保狀態更新完成後標記選擇器準備好
+    const timer = setTimeout(() => {
+      setSelectorsReady(true);
+    }, 50);
 
-  const [favoriteItems, setFavoriteItems] = useState<FavoriteItem[]>([]);
+    return () => clearTimeout(timer);
+  }, [type]);
 
-  useEffect(() => {
-    const fetchDoubanData = async () => {
-      try {
-        setLoading(true);
+  // 生成骨架屏數據
+  const skeletonData = Array.from({ length: 25 }, (_, index) => index);
 
-        // 並行獲取熱門電影和熱門電視劇
-        const [moviesData, tvShowsData] = await Promise.all([
-          getDoubanCategories({
-            kind: 'movie',
-            category: '熱門電影',
-            type: '全部',
-          }),
-          getDoubanCategories({ kind: 'tv', category: 'tv', type: 'tv' }),
-        ]);
-
-        if (moviesData.code === 200) {
-          setHotMovies(moviesData.list);
-        }
-
-        if (tvShowsData.code === 200) {
-          setHotTvShows(tvShowsData.list);
-        }
-      } catch (error) {
-        console.error('獲取豆瓣數據失敗:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchDoubanData();
-  }, []);
-
-  // 處理收藏數據更新的函數
-  const updateFavoriteItems = async (allFavorites: Record<string, any>) => {
-    const allPlayRecords = await getAllPlayRecords();
-
-    // 根據保存時間排序（從近到遠）
-    const sorted = Object.entries(allFavorites)
-      .sort(([, a], [, b]) => b.save_time - a.save_time)
-      .map(([key, fav]) => {
-        const plusIndex = key.indexOf('+');
-        const source = key.slice(0, plusIndex);
-        const id = key.slice(plusIndex + 1);
-
-        // 查找對應的播放記錄，獲取當前集數
-        const playRecord = allPlayRecords[key];
-        const currentEpisode = playRecord?.index;
-
+  // 生成API請求參數的輔助函數
+  const getRequestParams = useCallback(
+    (pageStart: number) => {
+      // 當type為tv或show時，kind統一為'tv'，category使用type本身
+      if (type === 'tv' || type === 'show') {
         return {
-          id,
-          source,
-          title: fav.title,
-          year: fav.year,
-          poster: fav.cover,
-          episodes: fav.total_episodes,
-          source_name: fav.source_name,
-          currentEpisode,
-          search_title: fav?.search_title,
-        } as FavoriteItem;
-      });
-    setFavoriteItems(sorted);
-  };
-
-  // 當切換到收藏夾時加載收藏數據
-  useEffect(() => {
-    if (activeTab !== 'favorites') return;
-
-    const loadFavorites = async () => {
-      const allFavorites = await getAllFavorites();
-      await updateFavoriteItems(allFavorites);
-    };
-
-    loadFavorites();
-
-    // 監聽收藏更新事件
-    const unsubscribe = subscribeToDataUpdates(
-      'favoritesUpdated',
-      (newFavorites: Record<string, any>) => {
-        updateFavoriteItems(newFavorites);
+          kind: 'tv' as const,
+          category: type,
+          type: secondarySelection,
+          pageLimit: 25,
+          pageStart,
+        };
       }
+
+      // 電影類型保持原邏輯
+      return {
+        kind: type as 'tv' | 'movie',
+        category: primarySelection,
+        type: secondarySelection,
+        pageLimit: 25,
+        pageStart,
+      };
+    },
+    [type, primarySelection, secondarySelection]
+  );
+
+  // 防抖的數據加載函數
+  const loadInitialData = useCallback(async () => {
+    try {
+      setLoading(true);
+      const data = await getDoubanCategories(getRequestParams(0));
+
+      if (data.code === 200) {
+        setDoubanData(data.list);
+        setHasMore(data.list.length === 25);
+        setLoading(false);
+      } else {
+        throw new Error(data.message || '獲取數據失敗');
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  }, [type, primarySelection, secondarySelection, getRequestParams]);
+
+  // 只在選擇器準備好後才加載數據
+  useEffect(() => {
+    // 只有在選擇器準備好時才開始加載
+    if (!selectorsReady) {
+      return;
+    }
+
+    // 重置頁面狀態
+    setDoubanData([]);
+    setCurrentPage(0);
+    setHasMore(true);
+    setIsLoadingMore(false);
+
+    // 清除之前的防抖定時器
+    if (debounceTimeoutRef.current) {
+      clearTimeout(debounceTimeoutRef.current);
+    }
+
+    // 使用防抖機制加載數據，避免連續狀態更新觸發多次請求
+    debounceTimeoutRef.current = setTimeout(() => {
+      loadInitialData();
+    }, 100); // 100ms 防抖延遲
+
+    // 清理函數
+    return () => {
+      if (debounceTimeoutRef.current) {
+        clearTimeout(debounceTimeoutRef.current);
+      }
+    };
+  }, [
+    selectorsReady,
+    type,
+    primarySelection,
+    secondarySelection,
+    loadInitialData,
+  ]);
+
+  // 單獨處理 currentPage 變化（加載更多）
+  useEffect(() => {
+    if (currentPage > 0) {
+      const fetchMoreData = async () => {
+        try {
+          setIsLoadingMore(true);
+
+          const data = await getDoubanCategories(
+            getRequestParams(currentPage * 25)
+          );
+
+          if (data.code === 200) {
+            setDoubanData((prev) => [...prev, ...data.list]);
+            setHasMore(data.list.length === 25);
+          } else {
+            throw new Error(data.message || '獲取數據失敗');
+          }
+        } catch (err) {
+          console.error(err);
+        } finally {
+          setIsLoadingMore(false);
+        }
+      };
+
+      fetchMoreData();
+    }
+  }, [currentPage, type, primarySelection, secondarySelection]);
+
+  // 設置滾動監聽
+  useEffect(() => {
+    // 如果沒有更多數據或正在加載，則不設置監聽
+    if (!hasMore || isLoadingMore || loading) {
+      return;
+    }
+
+    // 確保 loadingRef 存在
+    if (!loadingRef.current) {
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && hasMore && !isLoadingMore) {
+          setCurrentPage((prev) => prev + 1);
+        }
+      },
+      { threshold: 0.1 }
     );
 
-    return unsubscribe;
-  }, [activeTab]);
+    observer.observe(loadingRef.current);
+    observerRef.current = observer;
 
-  const handleCloseAnnouncement = (announcement: string) => {
-    setShowAnnouncement(false);
-    localStorage.setItem('hasSeenAnnouncement', announcement); // 記錄已查看彈窗
+    return () => {
+      if (observerRef.current) {
+        observerRef.current.disconnect();
+      }
+    };
+  }, [hasMore, isLoadingMore, loading]);
+
+  // 處理選擇器變化
+  const handlePrimaryChange = useCallback(
+    (value: string) => {
+      // 只有當值真正改變時才設置loading狀態
+      if (value !== primarySelection) {
+        setLoading(true);
+        setPrimarySelection(value);
+      }
+    },
+    [primarySelection]
+  );
+
+  const handleSecondaryChange = useCallback(
+    (value: string) => {
+      // 只有當值真正改變時才設置loading狀態
+      if (value !== secondarySelection) {
+        setLoading(true);
+        setSecondarySelection(value);
+      }
+    },
+    [secondarySelection]
+  );
+
+  const getPageTitle = () => {
+    // 根據 type 生成標題
+    return type === 'movie' ? '電影' : type === 'tv' ? '電視劇' : '綜藝';
+  };
+
+  const getActivePath = () => {
+    const params = new URLSearchParams();
+    if (type) params.set('type', type);
+
+    const queryString = params.toString();
+    const activePath = `/douban${queryString ? `?${queryString}` : ''}`;
+    return activePath;
   };
 
   return (
-    <PageLayout>
-      <div className='px-2 sm:px-10 py-4 sm:py-8 overflow-visible'>
-        {/* 頂部 Tab 切換 */}
-        <div className='mb-8 flex justify-center'>
-          <CapsuleSwitch
-            options={[
-              { label: '首頁', value: 'home' },
-              { label: '收藏夾', value: 'favorites' },
-            ]}
-            active={activeTab}
-            onChange={(value) => setActiveTab(value as 'home' | 'favorites')}
-          />
+    <PageLayout activePath={getActivePath()}>
+      <div className='px-4 sm:px-10 py-4 sm:py-8 overflow-visible'>
+        {/* 頁面標題和選擇器 */}
+        <div className='mb-6 sm:mb-8 space-y-4 sm:space-y-6'>
+          {/* 頁面標題 */}
+          <div>
+            <h1 className='text-2xl sm:text-3xl font-bold text-gray-800 mb-1 sm:mb-2 dark:text-gray-200'>
+              {getPageTitle()}
+            </h1>
+            <p className='text-sm sm:text-base text-gray-600 dark:text-gray-400'>
+              來自豆瓣的精選內容
+            </p>
+          </div>
+
+          {/* 選擇器組件 */}
+          <div className='bg-white/60 dark:bg-gray-800/40 rounded-2xl p-4 sm:p-6 border border-gray-200/30 dark:border-gray-700/30 backdrop-blur-sm'>
+            <DoubanSelector
+              type={type as 'movie' | 'tv' | 'show'}
+              primarySelection={primarySelection}
+              secondarySelection={secondarySelection}
+              onPrimaryChange={handlePrimaryChange}
+              onSecondaryChange={handleSecondaryChange}
+            />
+          </div>
         </div>
 
-        <div className='max-w-[95%] mx-auto'>
-          {activeTab === 'favorites' ? (
-            // 收藏夾視圖
-            <section className='mb-8'>
-              <div className='mb-4 flex items-center justify-between'>
-                <h2 className='text-xl font-bold text-gray-800 dark:text-gray-200'>
-                  我的收藏
-                </h2>
-                {favoriteItems.length > 0 && (
-                  <button
-                    className='text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
-                    onClick={async () => {
-                      await clearAllFavorites();
-                      setFavoriteItems([]);
-                    }}
-                  >
-                    清空
-                  </button>
-                )}
-              </div>
-              <div className='justify-start grid grid-cols-3 gap-x-2 gap-y-14 sm:gap-y-20 px-0 sm:px-2 sm:grid-cols-[repeat(auto-fill,_minmax(11rem,_1fr))] sm:gap-x-8'>
-                {favoriteItems.map((item) => (
-                  <div key={item.id + item.source} className='w-full'>
+        {/* 內容展示區域 */}
+        <div className='max-w-[95%] mx-auto mt-8 overflow-visible'>
+          {/* 內容網格 */}
+          <div className='grid grid-cols-3 gap-x-2 gap-y-12 px-0 sm:px-2 sm:grid-cols-[repeat(auto-fit,minmax(160px,1fr))] sm:gap-x-8 sm:gap-y-20'>
+            {loading || !selectorsReady
+              ? // 顯示骨架屏
+                skeletonData.map((index) => <DoubanCardSkeleton key={index} />)
+              : // 顯示實際數據
+                doubanData.map((item, index) => (
+                  <div key={`${item.title}-${index}`} className='w-full'>
                     <VideoCard
-                      query={item.search_title}
-                      {...item}
-                      from='favorite'
-                      type={item.episodes > 1 ? 'tv' : ''}
+                      from='douban'
+                      title={item.title}
+                      poster={item.poster}
+                      douban_id={item.id}
+                      rate={item.rate}
+                      year={item.year}
+                      type={type === 'movie' ? 'movie' : ''} // 電影類型嚴格控制，tv 不控
                     />
                   </div>
                 ))}
-                {favoriteItems.length === 0 && (
-                  <div className='col-span-full text-center text-gray-500 py-8 dark:text-gray-400'>
-                    暫無收藏內容
-                  </div>
-                )}
-              </div>
-            </section>
-          ) : (
-            // 首頁視圖
-            <>
-              {/* 繼續觀看 */}
-              <ContinueWatching />
+          </div>
 
-              {/* 熱門電影 */}
-              <section className='mb-8'>
-                <div className='mb-4 flex items-center justify-between'>
-                  <h2 className='text-xl font-bold text-gray-800 dark:text-gray-200'>
-                    熱門電影
-                  </h2>
-                  <Link
-                    href='/douban?type=movie'
-                    className='flex items-center text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
-                  >
-                    查看更多
-                    <ChevronRight className='w-4 h-4 ml-1' />
-                  </Link>
+          {/* 加載更多指示器 */}
+          {hasMore && !loading && (
+            <div
+              ref={(el) => {
+                if (el && el.offsetParent !== null) {
+                  (
+                    loadingRef as React.MutableRefObject<HTMLDivElement | null>
+                  ).current = el;
+                }
+              }}
+              className='flex justify-center mt-12 py-8'
+            >
+              {isLoadingMore && (
+                <div className='flex items-center gap-2'>
+                  <div className='animate-spin rounded-full h-6 w-6 border-b-2 border-green-500'></div>
+                  <span className='text-gray-600'>加載中...</span>
                 </div>
-                <ScrollableRow>
-                  {loading
-                    ? // 加載狀態顯示灰色佔位數據
-                      Array.from({ length: 8 }).map((_, index) => (
-                        <div
-                          key={index}
-                          className='min-w-[96px] w-24 sm:min-w-[180px] sm:w-44'
-                        >
-                          <div className='relative aspect-[2/3] w-full overflow-hidden rounded-lg bg-gray-200 animate-pulse dark:bg-gray-800'>
-                            <div className='absolute inset-0 bg-gray-300 dark:bg-gray-700'></div>
-                          </div>
-                          <div className='mt-2 h-4 bg-gray-200 rounded animate-pulse dark:bg-gray-800'></div>
-                        </div>
-                      ))
-                    : // 顯示真實數據
-                      hotMovies.map((movie, index) => (
-                        <div
-                          key={index}
-                          className='min-w-[96px] w-24 sm:min-w-[180px] sm:w-44'
-                        >
-                          <VideoCard
-                            from='douban'
-                            title={movie.title}
-                            poster={movie.poster}
-                            douban_id={movie.id}
-                            rate={movie.rate}
-                            year={movie.year}
-                            type='movie'
-                          />
-                        </div>
-                      ))}
-                </ScrollableRow>
-              </section>
+              )}
+            </div>
+          )}
 
-              {/* 熱門電視劇 */}
-              <section className='mb-8'>
-                <div className='mb-4 flex items-center justify-between'>
-                  <h2 className='text-xl font-bold text-gray-800 dark:text-gray-200'>
-                    熱門電視劇
-                  </h2>
-                  <Link
-                    href='/douban?type=tv'
-                    className='flex items-center text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
-                  >
-                    查看更多
-                    <ChevronRight className='w-4 h-4 ml-1' />
-                  </Link>
-                </div>
-                <ScrollableRow>
-                  {loading
-                    ? // 加載狀態顯示灰色佔位數據
-                      Array.from({ length: 8 }).map((_, index) => (
-                        <div
-                          key={index}
-                          className='min-w-[96px] w-24 sm:min-w-[180px] sm:w-44'
-                        >
-                          <div className='relative aspect-[2/3] w-full overflow-hidden rounded-lg bg-gray-200 animate-pulse dark:bg-gray-800'>
-                            <div className='absolute inset-0 bg-gray-300 dark:bg-gray-700'></div>
-                          </div>
-                          <div className='mt-2 h-4 bg-gray-200 rounded animate-pulse dark:bg-gray-800'></div>
-                        </div>
-                      ))
-                    : // 顯示真實數據
-                      hotTvShows.map((show, index) => (
-                        <div
-                          key={index}
-                          className='min-w-[96px] w-24 sm:min-w-[180px] sm:w-44'
-                        >
-                          <VideoCard
-                            from='douban'
-                            title={show.title}
-                            poster={show.poster}
-                            douban_id={show.id}
-                            rate={show.rate}
-                            year={show.year}
-                          />
-                        </div>
-                      ))}
-                </ScrollableRow>
-              </section>
-            </>
+          {/* 沒有更多數據提示 */}
+          {!hasMore && doubanData.length > 0 && (
+            <div className='text-center text-gray-500 py-8'>已加載全部內容</div>
+          )}
+
+          {/* 空狀態 */}
+          {!loading && doubanData.length === 0 && (
+            <div className='text-center text-gray-500 py-8'>暫無相關內容</div>
           )}
         </div>
       </div>
-      {announcement && showAnnouncement && (
-        <div
-          className={`fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm dark:bg-black/70 p-4 transition-opacity duration-300 ${
-            showAnnouncement ? '' : 'opacity-0 pointer-events-none'
-          }`}
-        >
-          <div className='w-full max-w-md rounded-xl bg-white p-6 shadow-xl dark:bg-gray-900 transform transition-all duration-300 hover:shadow-2xl'>
-            <div className='flex justify-between items-start mb-4'>
-              <h3 className='text-2xl font-bold tracking-tight text-gray-800 dark:text-white border-b border-green-500 pb-1'>
-                提示
-              </h3>
-              <button
-                onClick={() => handleCloseAnnouncement(announcement)}
-                className='text-gray-400 hover:text-gray-500 dark:text-gray-500 dark:hover:text-white transition-colors'
-                aria-label='關閉'
-              ></button>
-            </div>
-            <div className='mb-6'>
-              <div className='relative overflow-hidden rounded-lg mb-4 bg-green-50 dark:bg-green-900/20'>
-                <div className='absolute inset-y-0 left-0 w-1.5 bg-green-500 dark:bg-green-400'></div>
-                <p className='ml-4 text-gray-600 dark:text-gray-300 leading-relaxed'>
-                  {announcement}
-                </p>
-              </div>
-            </div>
-            <button
-              onClick={() => handleCloseAnnouncement(announcement)}
-              className='w-full rounded-lg bg-gradient-to-r from-green-600 to-green-700 px-4 py-3 text-white font-medium shadow-md hover:shadow-lg hover:from-green-700 hover:to-green-800 dark:from-green-600 dark:to-green-700 dark:hover:from-green-700 dark:hover:to-green-800 transition-all duration-300 transform hover:-translate-y-0.5'
-            >
-              我知道了
-            </button>
-          </div>
-        </div>
-      )}
     </PageLayout>
   );
 }
 
-export default function Home() {
+export default function DoubanPage() {
   return (
     <Suspense>
-      <HomeClient />
+      <DoubanPageClient />
     </Suspense>
   );
 }
