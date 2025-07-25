@@ -59,7 +59,7 @@ function DoubanPageClient() {
   useEffect(() => {
     // 批量更新選擇器狀態
     if (type === 'movie') {
-      setPrimarySelection('熱門');
+      setPrimarySelection('热门');
       setSecondarySelection('全部');
     } else if (type === 'tv') {
       setPrimarySelection('');
