@@ -207,11 +207,11 @@ function HomeClient() {
               {/* 繼續觀看 */}
               <ContinueWatching />
 
-              {/* 热门电影 */}
+              {/* 熱門電影 */}
               <section className='mb-8'>
                 <div className='mb-4 flex items-center justify-between'>
                   <h2 className='text-xl font-bold text-gray-800 dark:text-gray-200'>
-                    热门电影
+                    熱門電影
                   </h2>
                   <Link
                     href='/douban?type=movie'
@@ -255,11 +255,11 @@ function HomeClient() {
                 </ScrollableRow>
               </section>
 
-              {/* 热门剧集 */}
+              {/* 熱門電視劇 */}
               <section className='mb-8'>
                 <div className='mb-4 flex items-center justify-between'>
                   <h2 className='text-xl font-bold text-gray-800 dark:text-gray-200'>
-                    热门剧集
+                    熱門電視劇
                   </h2>
                   <Link
                     href='/douban?type=tv'
