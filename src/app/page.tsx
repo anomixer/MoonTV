@@ -63,11 +63,11 @@ function HomeClient() {
       try {
         setLoading(true);
 
-        // 并行获取热门电影和热门剧集
+        // 並行獲取熱門電影和熱門電視劇
         const [moviesData, tvShowsData] = await Promise.all([
           getDoubanCategories({
             kind: 'movie',
-            category: '热门',
+            category: '熱門電影',
             type: '全部',
           }),
           getDoubanCategories({ kind: 'tv', category: 'tv', type: 'tv' }),
