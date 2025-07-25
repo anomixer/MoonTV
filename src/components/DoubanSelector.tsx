@@ -41,37 +41,37 @@ const DoubanSelector: React.FC<DoubanSelectorProps> = ({
 
   // 電影的一級選擇器選項
   const moviePrimaryOptions: SelectorOption[] = [
-    { label: '热门电影', value: '熱門' },
+    { label: '熱門电影', value: '热门' },
     { label: '最新電影', value: '最新' },
     { label: '豆瓣高分', value: '豆瓣高分' },
-    { label: '冷门佳片', value: '冷門佳片' },
+    { label: '冷門佳片', value: '冷门佳片' },
   ];
 
   // 電影的二級選擇器選項
   const movieSecondaryOptions: SelectorOption[] = [
     { label: '全部', value: '全部' },
-    { label: '華語', value: '華語' },
-    { label: '歐美', value: '歐美' },
-    { label: '韓國', value: '韓國' },
+    { label: '華語', value: '华语' },
+    { label: '歐美', value: '欧美' },
+    { label: '韓國', value: '韩国' },
     { label: '日本', value: '日本' },
   ];
 
   // 電視劇選擇器選項
   const tvOptions: SelectorOption[] = [
     { label: '全部', value: 'tv' },
-    { label: '国产', value: 'tv_domestic' },
-    { label: '欧美', value: 'tv_american' },
+    { label: '國產', value: 'tv_domestic' },
+    { label: '歐美', value: 'tv_american' },
     { label: '日本', value: 'tv_japanese' },
-    { label: '韩国', value: 'tv_korean' },
-    { label: '动漫', value: 'tv_animation' },
-    { label: '纪录片', value: 'tv_documentary' },
+    { label: '韓國', value: 'tv_korean' },
+    { label: '動漫', value: 'tv_animation' },
+    { label: '紀錄片', value: 'tv_documentary' },
   ];
 
   // 綜藝選擇器選項
   const showOptions: SelectorOption[] = [
     { label: '全部', value: 'show' },
-    { label: '国内', value: 'show_domestic' },
-    { label: '国外', value: 'show_foreign' },
+    { label: '國内', value: 'show_domestic' },
+    { label: '國外', value: 'show_foreign' },
   ];
 
   // 更新指示器位置的通用函數
