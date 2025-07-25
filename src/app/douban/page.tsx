@@ -30,7 +30,7 @@ function DoubanPageClient() {
 
   // 選擇器狀態 - 完全獨立，不依賴URL參數
   const [primarySelection, setPrimarySelection] = useState<string>(() => {
-    return type === 'movie' ? '熱門' : '';
+    return type === 'movie' ? '热门' : '';
   });
   const [secondarySelection, setSecondarySelection] = useState<string>(() => {
     if (type === 'movie') return '全部';

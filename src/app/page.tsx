@@ -63,11 +63,11 @@ function HomeClient() {
       try {
         setLoading(true);
 
-        // 並行獲取熱門電影和熱門劇集
+        // 并行获取热门电影和热门剧集
         const [moviesData, tvShowsData] = await Promise.all([
           getDoubanCategories({
             kind: 'movie',
-            category: '熱門',
+            category: '热门',
             type: '全部',
           }),
           getDoubanCategories({ kind: 'tv', category: 'tv', type: 'tv' }),
@@ -207,11 +207,11 @@ function HomeClient() {
               {/* 繼續觀看 */}
               <ContinueWatching />
 
-              {/* 熱門電影 */}
+              {/* 热门电影 */}
               <section className='mb-8'>
                 <div className='mb-4 flex items-center justify-between'>
                   <h2 className='text-xl font-bold text-gray-800 dark:text-gray-200'>
-                    熱門電影
+                    热门电影
                   </h2>
                   <Link
                     href='/douban?type=movie'
@@ -255,11 +255,11 @@ function HomeClient() {
                 </ScrollableRow>
               </section>
 
-              {/* 熱門劇集 */}
+              {/* 热门剧集 */}
               <section className='mb-8'>
                 <div className='mb-4 flex items-center justify-between'>
                   <h2 className='text-xl font-bold text-gray-800 dark:text-gray-200'>
-                    熱門劇集
+                    热门剧集
                   </h2>
                   <Link
                     href='/douban?type=tv'
