@@ -130,7 +130,7 @@ const Sidebar = ({ onToggle, activePath = '/' }: SidebarProps) => {
     },
     {
       icon: Tv,
-      label: '劇集',
+      label: '電視劇',
       href: '/douban?type=tv',
     },
     {
