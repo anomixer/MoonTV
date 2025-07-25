@@ -25,7 +25,7 @@ export async function searchFromApi(
       apiBaseUrl + API_CONFIG.search.path + encodeURIComponent(query);
     const apiName = apiSite.name;
 
-    // 添加超时处理
+    // 添加超時處理
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 8000);
 
@@ -49,16 +49,16 @@ export async function searchFromApi(
     ) {
       return [];
     }
-    // 处理第一页结果
+    // 處理第一頁結果
     const results = data.list.map((item: ApiSearchItem) => {
       let episodes: string[] = [];
 
-      // 使用正则表达式从 vod_play_url 提取 m3u8 链接
+      // 使用正則表達式從 vod_play_url 提取 m3u8 鏈接
       if (item.vod_play_url) {
         const m3u8Regex = /\$(https?:\/\/[^"'\s]+?\.m3u8)/g;
         // 先用 $$$ 分割
         const vod_play_url_array = item.vod_play_url.split('$$$');
-        // 对每个分片做匹配，取匹配到最多的作为结果
+        // 對每個分片做匹配，取匹配到最多的作為結果
         vod_play_url_array.forEach((url: string) => {
           const matches = url.match(m3u8Regex) || [];
           if (matches.length > episodes.length) {
@@ -68,7 +68,7 @@ export async function searchFromApi(
       }
 
       episodes = Array.from(new Set(episodes)).map((link: string) => {
-        link = link.substring(1); // 去掉开头的 $
+        link = link.substring(1); // 去掉開頭的 $
         const parenIndex = link.indexOf('(');
         return parenIndex > 0 ? link.substring(0, parenIndex) : link;
       });
@@ -93,12 +93,12 @@ export async function searchFromApi(
     const config = await getConfig();
     const MAX_SEARCH_PAGES: number = config.SiteConfig.SearchDownstreamMaxPage;
 
-    // 获取总页数
+    // 獲取總頁數
     const pageCount = data.pagecount || 1;
-    // 确定需要获取的额外页数
+    // 確定需要獲取的額外頁數
     const pagesToFetch = Math.min(pageCount - 1, MAX_SEARCH_PAGES - 1);
 
-    // 如果有额外页数，获取更多页的结果
+    // 如果有額外頁數，獲取更多頁的結果
     if (pagesToFetch > 0) {
       const additionalPagePromises = [];
 
@@ -134,14 +134,14 @@ export async function searchFromApi(
             return pageData.list.map((item: ApiSearchItem) => {
               let episodes: string[] = [];
 
-              // 使用正则表达式从 vod_play_url 提取 m3u8 链接
+              // 使用正則表達式從 vod_play_url 提取 m3u8 鏈接
               if (item.vod_play_url) {
                 const m3u8Regex = /\$(https?:\/\/[^"'\s]+?\.m3u8)/g;
                 episodes = item.vod_play_url.match(m3u8Regex) || [];
               }
 
               episodes = Array.from(new Set(episodes)).map((link: string) => {
-                link = link.substring(1); // 去掉开头的 $
+                link = link.substring(1); // 去掉開頭的 $
                 const parenIndex = link.indexOf('(');
                 return parenIndex > 0 ? link.substring(0, parenIndex) : link;
               });
@@ -170,10 +170,10 @@ export async function searchFromApi(
         additionalPagePromises.push(pagePromise);
       }
 
-      // 等待所有额外页的结果
+      // 等待所有額外頁的結果
       const additionalResults = await Promise.all(additionalPagePromises);
 
-      // 合并所有页的结果
+      // 合併所有頁的結果
       additionalResults.forEach((pageResults) => {
         if (pageResults.length > 0) {
           results.push(...pageResults);
@@ -187,7 +187,7 @@ export async function searchFromApi(
   }
 }
 
-// 匹配 m3u8 链接的正则
+// 匹配 m3u8 鏈接的正則
 const M3U8_PATTERN = /(https?:\/\/[^"'\s]+?\.m3u8)/g;
 
 export async function getDetailFromApi(
@@ -211,7 +211,7 @@ export async function getDetailFromApi(
   clearTimeout(timeoutId);
 
   if (!response.ok) {
-    throw new Error(`详情请求失败: ${response.status}`);
+    throw new Error(`詳情請求失敗: ${response.status}`);
   }
 
   const data = await response.json();
@@ -222,13 +222,13 @@ export async function getDetailFromApi(
     !Array.isArray(data.list) ||
     data.list.length === 0
   ) {
-    throw new Error('获取到的详情内容无效');
+    throw new Error('獲取到的詳情內容無效');
   }
 
   const videoDetail = data.list[0];
   let episodes: string[] = [];
 
-  // 处理播放源拆分
+  // 處理播放源拆分
   if (videoDetail.vod_play_url) {
     const playSources = videoDetail.vod_play_url.split('$$$');
     if (playSources.length > 0) {
@@ -246,7 +246,7 @@ export async function getDetailFromApi(
     }
   }
 
-  // 如果播放源为空，则尝试从内容中解析 m3u8
+  // 如果播放源為空，則嘗試從內容中解析 m3u8
   if (episodes.length === 0 && videoDetail.vod_content) {
     const matches = videoDetail.vod_content.match(M3U8_PATTERN) || [];
     episodes = matches.map((link: string) => link.replace(/^\$/, ''));
@@ -286,7 +286,7 @@ async function handleSpecialSourceDetail(
   clearTimeout(timeoutId);
 
   if (!response.ok) {
-    throw new Error(`详情页请求失败: ${response.status}`);
+    throw new Error(`詳情頁請求失敗: ${response.status}`);
   }
 
   const html = await response.text();
@@ -303,14 +303,14 @@ async function handleSpecialSourceDetail(
     matches = html.match(generalPattern) || [];
   }
 
-  // 去重并清理链接前缀
+  // 去重並清理鏈接前綴
   matches = Array.from(new Set(matches)).map((link: string) => {
-    link = link.substring(1); // 去掉开头的 $
+    link = link.substring(1); // 去掉開頭的 $
     const parenIndex = link.indexOf('(');
     return parenIndex > 0 ? link.substring(0, parenIndex) : link;
   });
 
-  // 提取标题
+  // 提取標題
   const titleMatch = html.match(/<h1[^>]*>([^<]+)<\/h1>/);
   const titleText = titleMatch ? titleMatch[1].trim() : '';
 

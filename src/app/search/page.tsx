@@ -18,7 +18,7 @@ import PageLayout from '@/components/PageLayout';
 import VideoCard from '@/components/VideoCard';
 
 function SearchPageClient() {
-  // 搜索历史
+  // 搜索歷史
   const [searchHistory, setSearchHistory] = useState<string[]>([]);
 
   const router = useRouter();
@@ -28,7 +28,7 @@ function SearchPageClient() {
   const [showResults, setShowResults] = useState(false);
   const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
 
-  // 获取默认聚合设置：只读取用户本地设置，默认为 true
+  // 獲取默認聚合設置：只讀取用戶本地設置，默認為 true
   const getDefaultAggregate = () => {
     if (typeof window !== 'undefined') {
       const userSetting = localStorage.getItem('defaultAggregateSearch');
@@ -36,18 +36,18 @@ function SearchPageClient() {
         return JSON.parse(userSetting);
       }
     }
-    return true; // 默认启用聚合
+    return true; // 默認啟用聚合
   };
 
   const [viewMode, setViewMode] = useState<'agg' | 'all'>(() => {
     return getDefaultAggregate() ? 'agg' : 'all';
   });
 
-  // 聚合后的结果（按标题和年份分组）
+  // 聚合後的結果（按標題和年份分組）
   const aggregatedResults = useMemo(() => {
     const map = new Map<string, SearchResult[]>();
     searchResults.forEach((item) => {
-      // 使用 title + year + type 作为键，year 必然存在，但依然兜底 'unknown'
+      // 使用 title + year + type 作為鍵，year 必然存在，但依然兜底 'unknown'
       const key = `${item.title.replaceAll(' ', '')}-${
         item.year || 'unknown'
       }-${item.episodes.length === 1 ? 'movie' : 'tv'}`;
@@ -56,7 +56,7 @@ function SearchPageClient() {
       map.set(key, arr);
     });
     return Array.from(map.entries()).sort((a, b) => {
-      // 优先排序：标题与搜索词完全一致的排在前面
+      // 優先排序：標題與搜索詞完全一致的排在前面
       const aExactMatch = a[1][0].title
         .replaceAll(' ', '')
         .includes(searchQuery.trim().replaceAll(' ', ''));
@@ -71,18 +71,18 @@ function SearchPageClient() {
       if (a[1][0].year === b[1][0].year) {
         return a[0].localeCompare(b[0]);
       } else {
-        // 处理 unknown 的情况
+        // 處理 unknown 的情況
         const aYear = a[1][0].year;
         const bYear = b[1][0].year;
 
         if (aYear === 'unknown' && bYear === 'unknown') {
           return 0;
         } else if (aYear === 'unknown') {
-          return 1; // a 排在后面
+          return 1; // a 排在後面
         } else if (bYear === 'unknown') {
-          return -1; // b 排在后面
+          return -1; // b 排在後面
         } else {
-          // 都是数字年份，按数字大小排序（大的在前面）
+          // 都是數字年份，按數字大小排序（大的在前面）
           return aYear > bYear ? -1 : 1;
         }
       }
@@ -90,13 +90,13 @@ function SearchPageClient() {
   }, [searchResults]);
 
   useEffect(() => {
-    // 无搜索参数时聚焦搜索框
+    // 無搜索參數時聚焦搜索框
     !searchParams.get('q') && document.getElementById('searchInput')?.focus();
 
-    // 初始加载搜索历史
+    // 初始加載搜索歷史
     getSearchHistory().then(setSearchHistory);
 
-    // 监听搜索历史更新事件
+    // 監聽搜索歷史更新事件
     const unsubscribe = subscribeToDataUpdates(
       'searchHistoryUpdated',
       (newHistory: string[]) => {
@@ -108,13 +108,13 @@ function SearchPageClient() {
   }, []);
 
   useEffect(() => {
-    // 当搜索参数变化时更新搜索状态
+    // 當搜索參數變化時更新搜索狀態
     const query = searchParams.get('q');
     if (query) {
       setSearchQuery(query);
       fetchSearchResults(query);
 
-      // 保存到搜索历史 (事件监听会自动更新界面)
+      // 保存到搜索歷史 (事件監聽會自動更新界面)
       addSearchHistory(query);
     } else {
       setShowResults(false);
@@ -130,26 +130,26 @@ function SearchPageClient() {
       const data = await response.json();
       setSearchResults(
         data.results.sort((a: SearchResult, b: SearchResult) => {
-          // 优先排序：标题与搜索词完全一致的排在前面
+          // 優先排序：標題與搜索詞完全一致的排在前面
           const aExactMatch = a.title === query.trim();
           const bExactMatch = b.title === query.trim();
 
           if (aExactMatch && !bExactMatch) return -1;
           if (!aExactMatch && bExactMatch) return 1;
 
-          // 如果都匹配或都不匹配，则按原来的逻辑排序
+          // 如果都匹配或都不匹配，則按原來的邏輯排序
           if (a.year === b.year) {
             return a.title.localeCompare(b.title);
           } else {
-            // 处理 unknown 的情况
+            // 處理 unknown 的情況
             if (a.year === 'unknown' && b.year === 'unknown') {
               return 0;
             } else if (a.year === 'unknown') {
-              return 1; // a 排在后面
+              return 1; // a 排在後面
             } else if (b.year === 'unknown') {
-              return -1; // b 排在后面
+              return -1; // b 排在後面
             } else {
-              // 都是数字年份，按数字大小排序（大的在前面）
+              // 都是數字年份，按數字大小排序（大的在前面）
               return parseInt(a.year) > parseInt(b.year) ? -1 : 1;
             }
           }
@@ -168,16 +168,16 @@ function SearchPageClient() {
     const trimmed = searchQuery.trim().replace(/\s+/g, ' ');
     if (!trimmed) return;
 
-    // 回显搜索框
+    // 回顯搜索框
     setSearchQuery(trimmed);
     setIsLoading(true);
     setShowResults(true);
 
     router.push(`/search?q=${encodeURIComponent(trimmed)}`);
-    // 直接发请求
+    // 直接發請求
     fetchSearchResults(trimmed);
 
-    // 保存到搜索历史 (事件监听会自动更新界面)
+    // 保存到搜索歷史 (事件監聽會自動更新界面)
     addSearchHistory(trimmed);
   };
 
@@ -194,14 +194,14 @@ function SearchPageClient() {
                 type='text'
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder='搜索电影、电视剧...'
+                placeholder='搜索電影、電視劇...'
                 className='w-full h-12 rounded-lg bg-gray-50/80 py-3 pl-10 pr-4 text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-400 focus:bg-white border border-gray-200/50 shadow-sm dark:bg-gray-800 dark:text-gray-300 dark:placeholder-gray-500 dark:focus:bg-gray-700 dark:border-gray-700'
               />
             </div>
           </form>
         </div>
 
-        {/* 搜索结果或搜索历史 */}
+        {/* 搜索結果或搜索歷史 */}
         <div className='max-w-[95%] mx-auto mt-12 overflow-visible'>
           {isLoading ? (
             <div className='flex justify-center items-center h-40'>
@@ -209,12 +209,12 @@ function SearchPageClient() {
             </div>
           ) : showResults ? (
             <section className='mb-12'>
-              {/* 标题 + 聚合开关 */}
+              {/* 標題 + 聚合開關 */}
               <div className='mb-8 flex items-center justify-between'>
                 <h2 className='text-xl font-bold text-gray-800 dark:text-gray-200'>
-                  搜索结果
+                  搜索結果
                 </h2>
-                {/* 聚合开关 */}
+                {/* 聚合開關 */}
                 <label className='flex items-center gap-2 cursor-pointer select-none'>
                   <span className='text-sm text-gray-700 dark:text-gray-300'>
                     聚合
@@ -279,20 +279,20 @@ function SearchPageClient() {
                     ))}
                 {searchResults.length === 0 && (
                   <div className='col-span-full text-center text-gray-500 py-8 dark:text-gray-400'>
-                    未找到相关结果
+                    未找到相關結果
                   </div>
                 )}
               </div>
             </section>
           ) : searchHistory.length > 0 ? (
-            // 搜索历史
+            // 搜索歷史
             <section className='mb-12'>
               <h2 className='mb-4 text-xl font-bold text-gray-800 text-left dark:text-gray-200'>
-                搜索历史
+                搜索歷史
                 {searchHistory.length > 0 && (
                   <button
                     onClick={() => {
-                      clearSearchHistory(); // 事件监听会自动更新界面
+                      clearSearchHistory(); // 事件監聽會自動更新界面
                     }}
                     className='ml-3 text-sm text-gray-500 hover:text-red-500 transition-colors dark:text-gray-400 dark:hover:text-red-500'
                   >
@@ -314,13 +314,13 @@ function SearchPageClient() {
                     >
                       {item}
                     </button>
-                    {/* 删除按钮 */}
+                    {/* 刪除按鈕 */}
                     <button
-                      aria-label='删除搜索历史'
+                      aria-label='刪除搜索歷史'
                       onClick={(e) => {
                         e.stopPropagation();
                         e.preventDefault();
-                        deleteSearchHistory(item); // 事件监听会自动更新界面
+                        deleteSearchHistory(item); // 事件監聽會自動更新界面
                       }}
                       className='absolute -top-1 -right-1 w-4 h-4 opacity-0 group-hover:opacity-100 bg-gray-400 hover:bg-red-500 text-white rounded-full flex items-center justify-center text-[10px] transition-colors'
                     >

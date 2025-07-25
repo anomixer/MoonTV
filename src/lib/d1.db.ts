@@ -3,10 +3,10 @@
 import { AdminConfig } from './admin.types';
 import { Favorite, IStorage, PlayRecord } from './types';
 
-// 搜索历史最大条数
+// 搜索歷史最大條數
 const SEARCH_HISTORY_LIMIT = 20;
 
-// D1 数据库接口
+// D1 數據庫接口
 interface D1Database {
   prepare(sql: string): D1PreparedStatement;
   exec(sql: string): Promise<D1ExecResult>;
@@ -37,7 +37,7 @@ interface D1ExecResult {
   duration: number;
 }
 
-// 获取全局D1数据库实例
+// 獲取全局D1數據庫實例
 function getD1Database(): D1Database {
   return (process.env as any).DB as D1Database;
 }
@@ -52,7 +52,7 @@ export class D1Storage implements IStorage {
     return this.db;
   }
 
-  // 播放记录相关
+  // 播放記錄相關
   async getPlayRecord(
     userName: string,
     key: string
@@ -169,7 +169,7 @@ export class D1Storage implements IStorage {
     }
   }
 
-  // 收藏相关
+  // 收藏相關
   async getFavorite(userName: string, key: string): Promise<Favorite | null> {
     try {
       const db = await this.getDatabase();
@@ -271,7 +271,7 @@ export class D1Storage implements IStorage {
     }
   }
 
-  // 用户相关
+  // 用戶相關
   async registerUser(userName: string, password: string): Promise<void> {
     try {
       const db = await this.getDatabase();
@@ -349,7 +349,7 @@ export class D1Storage implements IStorage {
     }
   }
 
-  // 搜索历史相关
+  // 搜索歷史相關
   async getSearchHistory(userName: string): Promise<string[]> {
     try {
       const db = await this.getDatabase();
@@ -370,7 +370,7 @@ export class D1Storage implements IStorage {
   async addSearchHistory(userName: string, keyword: string): Promise<void> {
     try {
       const db = await this.getDatabase();
-      // 先删除可能存在的重复记录
+      // 先刪除可能存在的重複記錄
       await db
         .prepare(
           'DELETE FROM search_history WHERE username = ? AND keyword = ?'
@@ -378,13 +378,13 @@ export class D1Storage implements IStorage {
         .bind(userName, keyword)
         .run();
 
-      // 添加新记录
+      // 添加新記錄
       await db
         .prepare('INSERT INTO search_history (username, keyword) VALUES (?, ?)')
         .bind(userName, keyword)
         .run();
 
-      // 保持历史记录条数限制
+      // 保持歷史記錄條數限制
       await db
         .prepare(
           `
@@ -427,7 +427,7 @@ export class D1Storage implements IStorage {
     }
   }
 
-  // 用户列表
+  // 用戶列表
   async getAllUsers(): Promise<string[]> {
     try {
       const db = await this.getDatabase();
@@ -442,7 +442,7 @@ export class D1Storage implements IStorage {
     }
   }
 
-  // 管理员配置相关
+  // 管理員配置相關
   async getAdminConfig(): Promise<AdminConfig | null> {
     try {
       const db = await this.getDatabase();

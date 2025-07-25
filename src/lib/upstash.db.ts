@@ -5,10 +5,10 @@ import { Redis } from '@upstash/redis';
 import { AdminConfig } from './admin.types';
 import { Favorite, IStorage, PlayRecord } from './types';
 
-// 搜索历史最大条数
+// 搜索歷史最大條數
 const SEARCH_HISTORY_LIMIT = 20;
 
-// 添加Upstash Redis操作重试包装器
+// 添加Upstash Redis操作重試包裝器
 async function withRetry<T>(
   operation: () => Promise<T>,
   maxRetries = 3
@@ -32,7 +32,7 @@ async function withRetry<T>(
         );
         console.error('Error:', err.message);
 
-        // 等待一段时间后重试
+        // 等待一段時間後重試
         await new Promise((resolve) => setTimeout(resolve, 1000 * (i + 1)));
         continue;
       }
@@ -51,7 +51,7 @@ export class UpstashRedisStorage implements IStorage {
     this.client = getUpstashRedisClient();
   }
 
-  // ---------- 播放记录 ----------
+  // ---------- 播放記錄 ----------
   private prKey(user: string, key: string) {
     return `u:${user}:pr:${key}`; // u:username:pr:source+id
   }
@@ -139,13 +139,13 @@ export class UpstashRedisStorage implements IStorage {
     await withRetry(() => this.client.del(this.favKey(userName, key)));
   }
 
-  // ---------- 用户注册 / 登录 ----------
+  // ---------- 用戶註冊 / 登錄 ----------
   private userPwdKey(user: string) {
     return `u:${user}:pwd`;
   }
 
   async registerUser(userName: string, password: string): Promise<void> {
-    // 简单存储明文密码，生产环境应加密
+    // 簡單存儲明文密碼，生產環境應加密
     await withRetry(() => this.client.set(this.userPwdKey(userName), password));
   }
 
@@ -157,32 +157,32 @@ export class UpstashRedisStorage implements IStorage {
     return stored === password;
   }
 
-  // 检查用户是否存在
+  // 檢查用戶是否存在
   async checkUserExist(userName: string): Promise<boolean> {
-    // 使用 EXISTS 判断 key 是否存在
+    // 使用 EXISTS 判斷 key 是否存在
     const exists = await withRetry(() =>
       this.client.exists(this.userPwdKey(userName))
     );
     return exists === 1;
   }
 
-  // 修改用户密码
+  // 修改用戶密碼
   async changePassword(userName: string, newPassword: string): Promise<void> {
-    // 简单存储明文密码，生产环境应加密
+    // 簡單存儲明文密碼，生產環境應加密
     await withRetry(() =>
       this.client.set(this.userPwdKey(userName), newPassword)
     );
   }
 
-  // 删除用户及其所有数据
+  // 刪除用戶及其所有數據
   async deleteUser(userName: string): Promise<void> {
-    // 删除用户密码
+    // 刪除用戶密碼
     await withRetry(() => this.client.del(this.userPwdKey(userName)));
 
-    // 删除搜索历史
+    // 刪除搜索歷史
     await withRetry(() => this.client.del(this.shKey(userName)));
 
-    // 删除播放记录
+    // 刪除播放記錄
     const playRecordPattern = `u:${userName}:pr:*`;
     const playRecordKeys = await withRetry(() =>
       this.client.keys(playRecordPattern)
@@ -191,7 +191,7 @@ export class UpstashRedisStorage implements IStorage {
       await withRetry(() => this.client.del(...playRecordKeys));
     }
 
-    // 删除收藏夹
+    // 刪除收藏夾
     const favoritePattern = `u:${userName}:fav:*`;
     const favoriteKeys = await withRetry(() =>
       this.client.keys(favoritePattern)
@@ -201,7 +201,7 @@ export class UpstashRedisStorage implements IStorage {
     }
   }
 
-  // ---------- 搜索历史 ----------
+  // ---------- 搜索歷史 ----------
   private shKey(user: string) {
     return `u:${user}:sh`; // u:username:sh
   }
@@ -219,7 +219,7 @@ export class UpstashRedisStorage implements IStorage {
     await withRetry(() => this.client.lrem(key, 0, keyword));
     // 插入到最前
     await withRetry(() => this.client.lpush(key, keyword));
-    // 限制最大长度
+    // 限制最大長度
     await withRetry(() => this.client.ltrim(key, 0, SEARCH_HISTORY_LIMIT - 1));
   }
 
@@ -232,7 +232,7 @@ export class UpstashRedisStorage implements IStorage {
     }
   }
 
-  // ---------- 获取全部用户 ----------
+  // ---------- 獲取全部用戶 ----------
   async getAllUsers(): Promise<string[]> {
     const keys = await withRetry(() => this.client.keys('u:*:pwd'));
     return keys
@@ -243,7 +243,7 @@ export class UpstashRedisStorage implements IStorage {
       .filter((u): u is string => typeof u === 'string');
   }
 
-  // ---------- 管理员配置 ----------
+  // ---------- 管理員配置 ----------
   private adminConfigKey() {
     return 'admin:config';
   }
@@ -258,7 +258,7 @@ export class UpstashRedisStorage implements IStorage {
   }
 }
 
-// 单例 Upstash Redis 客户端
+// 單例 Upstash Redis 客戶端
 function getUpstashRedisClient(): Redis {
   const globalKey = Symbol.for('__MOONTV_UPSTASH_REDIS_CLIENT__');
   let client: Redis | undefined = (global as any)[globalKey];
@@ -273,11 +273,11 @@ function getUpstashRedisClient(): Redis {
       );
     }
 
-    // 创建 Upstash Redis 客户端
+    // 創建 Upstash Redis 客戶端
     client = new Redis({
       url: upstashUrl,
       token: upstashToken,
-      // 可选配置
+      // 可選配置
       retry: {
         retries: 3,
         backoff: (retryCount: number) =>

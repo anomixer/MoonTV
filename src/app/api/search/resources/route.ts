@@ -16,6 +16,6 @@ export async function GET() {
       },
     });
   } catch (error) {
-    return NextResponse.json({ error: '获取资源失败' }, { status: 500 });
+    return NextResponse.json({ error: '獲取資源失敗' }, { status: 500 });
   }
 }

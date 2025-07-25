@@ -1,6 +1,6 @@
 import { NextRequest } from 'next/server';
 
-// 从cookie获取认证信息 (服务端使用)
+// 從cookie獲取認證信息 (服務端使用)
 export function getAuthInfoFromCookie(request: NextRequest): {
   password?: string;
   username?: string;
@@ -22,7 +22,7 @@ export function getAuthInfoFromCookie(request: NextRequest): {
   }
 }
 
-// 从cookie获取认证信息 (客户端使用)
+// 從cookie獲取認證信息 (客戶端使用)
 export function getAuthInfoFromBrowserCookie(): {
   password?: string;
   username?: string;
@@ -55,10 +55,10 @@ export function getAuthInfoFromBrowserCookie(): {
       return null;
     }
 
-    // 处理可能的双重编码
+    // 處理可能的雙重編碼
     let decoded = decodeURIComponent(authCookie);
 
-    // 如果解码后仍然包含 %，说明是双重编码，需要再次解码
+    // 如果解碼後仍然包含 %，說明是雙重編碼，需要再次解碼
     if (decoded.includes('%')) {
       decoded = decodeURIComponent(decoded);
     }

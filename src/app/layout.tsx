@@ -11,7 +11,7 @@ import { ThemeProvider } from '../components/ThemeProvider';
 
 const inter = Inter({ subsets: ['latin'] });
 
-// 动态生成 metadata，支持配置更新后的标题变化
+// 動態生成 metadata，支持配置更新後的標題變化
 export async function generateMetadata(): Promise<Metadata> {
   let siteName = process.env.SITE_NAME || 'MoonTV';
   if (
@@ -24,7 +24,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
   return {
     title: siteName,
-    description: '影视聚合',
+    description: '影視聚合',
     manifest: '/manifest.json',
   };
 }
@@ -41,7 +41,7 @@ export default async function RootLayout({
   let siteName = process.env.SITE_NAME || 'MoonTV';
   let announcement =
     process.env.ANNOUNCEMENT ||
-    '本网站仅提供影视信息搜索服务，所有内容均来自第三方网站。本站不存储任何视频资源，不对任何内容的准确性、合法性、完整性负责。';
+    '本網站僅提供影視信息搜索服務，所有內容均來自第三方網站。本站不存儲任何視頻資源，不對任何內容的準確性、合法性、完整性負責。';
   let enableRegister = process.env.NEXT_PUBLIC_ENABLE_REGISTER === 'true';
   let imageProxy = process.env.NEXT_PUBLIC_IMAGE_PROXY || '';
   if (
@@ -55,7 +55,7 @@ export default async function RootLayout({
     imageProxy = config.SiteConfig.ImageProxy;
   }
 
-  // 将运行时配置注入到全局 window 对象，供客户端在运行时读取
+  // 將運行時配置注入到全局 window 對象，供客戶端在運行時讀取
   const runtimeConfig = {
     STORAGE_TYPE: process.env.NEXT_PUBLIC_STORAGE_TYPE || 'localstorage',
     ENABLE_REGISTER: enableRegister,
@@ -65,7 +65,7 @@ export default async function RootLayout({
   return (
     <html lang='zh-CN' suppressHydrationWarning>
       <head>
-        {/* 将配置序列化后直接写入脚本，浏览器端可通过 window.RUNTIME_CONFIG 获取 */}
+        {/* 將配置序列化後直接寫入腳本，瀏覽器端可通過 window.RUNTIME_CONFIG 獲取 */}
         {/* eslint-disable-next-line @next/next/no-sync-scripts */}
         <script
           dangerouslySetInnerHTML={{

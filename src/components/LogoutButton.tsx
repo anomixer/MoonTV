@@ -14,13 +14,13 @@ export const LogoutButton: React.FC = () => {
     setLoading(true);
 
     try {
-      // 调用注销API来清除cookie
+      // 調用註銷API來清除cookie
       await fetch('/api/logout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
       });
     } catch (error) {
-      console.error('注销请求失败:', error);
+      console.error('註銷請求失敗:', error);
     }
 
     window.location.reload();

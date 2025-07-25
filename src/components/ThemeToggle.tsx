@@ -28,12 +28,12 @@ export function ThemeToggle() {
   }, []);
 
   if (!mounted) {
-    // 渲染一个占位符以避免布局偏移
+    // 渲染一個佔位符以避免佈局偏移
     return <div className='w-10 h-10' />;
   }
 
   const toggleTheme = () => {
-    // 检查浏览器是否支持 View Transitions API
+    // 檢查瀏覽器是否支持 View Transitions API
     const targetTheme = resolvedTheme === 'dark' ? 'light' : 'dark';
     setThemeColor(targetTheme);
     if (!(document as any).startViewTransition) {

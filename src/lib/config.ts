@@ -39,7 +39,7 @@ export const API_CONFIG = {
   },
 };
 
-// 在模块加载时根据环境决定配置来源
+// 在模塊加載時根據環境決定配置來源
 let fileConfig: ConfigFileStruct;
 let cachedConfig: AdminConfig;
 
@@ -59,36 +59,36 @@ async function initConfig() {
     fileConfig = JSON.parse(raw) as ConfigFileStruct;
     console.log('load dynamic config success');
   } else {
-    // 默认使用编译时生成的配置
+    // 默認使用編譯時生成的配置
     fileConfig = runtimeConfig as unknown as ConfigFileStruct;
   }
   const storageType = process.env.NEXT_PUBLIC_STORAGE_TYPE || 'localstorage';
   if (storageType !== 'localstorage') {
-    // 数据库存储，读取并补全管理员配置
+    // 數據庫存儲，讀取並補全管理員配置
     const storage = getStorage();
 
     try {
-      // 尝试从数据库获取管理员配置
+      // 嘗試從數據庫獲取管理員配置
       let adminConfig: AdminConfig | null = null;
       if (storage && typeof (storage as any).getAdminConfig === 'function') {
         adminConfig = await (storage as any).getAdminConfig();
       }
 
-      // 获取所有用户名，用于补全 Users
+      // 獲取所有用戶名，用於補全 Users
       let userNames: string[] = [];
       if (storage && typeof (storage as any).getAllUsers === 'function') {
         try {
           userNames = await (storage as any).getAllUsers();
         } catch (e) {
-          console.error('获取用户列表失败:', e);
+          console.error('獲取用戶列表失敗:', e);
         }
       }
 
-      // 从文件中获取源信息，用于补全源
+      // 從文件中獲取源信息，用於補全源
       const apiSiteEntries = Object.entries(fileConfig.api_site);
 
       if (adminConfig) {
-        // 补全 SourceConfig
+        // 補全 SourceConfig
         const existed = new Set(
           (adminConfig.SourceConfig || []).map((s) => s.key)
         );
@@ -105,7 +105,7 @@ async function initConfig() {
           }
         });
 
-        // 检查现有源是否在 fileConfig.api_site 中，如果不在则标记为 custom
+        // 檢查現有源是否在 fileConfig.api_site 中，如果不在則標記為 custom
         const apiSiteKeys = new Set(apiSiteEntries.map(([key]) => key));
         adminConfig.SourceConfig.forEach((source) => {
           if (!apiSiteKeys.has(source.key)) {
@@ -124,7 +124,7 @@ async function initConfig() {
             });
           }
         });
-        // 站长
+        // 站長
         const ownerUser = process.env.USERNAME;
         if (ownerUser) {
           adminConfig!.UserConfig.Users = adminConfig!.UserConfig.Users.filter(
@@ -136,7 +136,7 @@ async function initConfig() {
           });
         }
       } else {
-        // 数据库中没有配置，创建新的管理员配置
+        // 數據庫中沒有配置，創建新的管理員配置
         let allUsers = userNames.map((uname) => ({
           username: uname,
           role: 'user',
@@ -154,7 +154,7 @@ async function initConfig() {
             SiteName: process.env.SITE_NAME || 'MoonTV',
             Announcement:
               process.env.ANNOUNCEMENT ||
-              '本网站仅提供影视信息搜索服务，所有内容均来自第三方网站。本站不存储任何视频资源，不对任何内容的准确性、合法性、完整性负责。',
+              '本網站僅提供影視信息搜索服務，所有內容均來自第三方網站。本站不存儲任何視頻資源，不對任何內容的準確性、合法性、完整性負責。',
             SearchDownstreamMaxPage:
               Number(process.env.NEXT_PUBLIC_SEARCH_MAX_PAGE) || 5,
             SiteInterfaceCacheTime: fileConfig.cache_time || 7200,
@@ -175,24 +175,24 @@ async function initConfig() {
         };
       }
 
-      // 写回数据库（更新/创建）
+      // 寫回數據庫（更新/創建）
       if (storage && typeof (storage as any).setAdminConfig === 'function') {
         await (storage as any).setAdminConfig(adminConfig);
       }
 
-      // 更新缓存
+      // 更新緩存
       cachedConfig = adminConfig;
     } catch (err) {
-      console.error('加载管理员配置失败:', err);
+      console.error('加載管理員配置失敗:', err);
     }
   } else {
-    // 本地存储直接使用文件配置
+    // 本地存儲直接使用文件配置
     cachedConfig = {
       SiteConfig: {
         SiteName: process.env.SITE_NAME || 'MoonTV',
         Announcement:
           process.env.ANNOUNCEMENT ||
-          '本网站仅提供影视信息搜索服务，所有内容均来自第三方网站。本站不存储任何视频资源，不对任何内容的准确性、合法性、完整性负责。',
+          '本網站僅提供影視信息搜索服務，所有內容均來自第三方網站。本站不存儲任何視頻資源，不對任何內容的準確性、合法性、完整性負責。',
         SearchDownstreamMaxPage:
           Number(process.env.NEXT_PUBLIC_SEARCH_MAX_PAGE) || 5,
         SiteInterfaceCacheTime: fileConfig.cache_time || 7200,
@@ -220,24 +220,24 @@ export async function getConfig(): Promise<AdminConfig> {
     await initConfig();
     return cachedConfig;
   }
-  // 非 docker 环境且 DB 存储，直接读 db 配置
+  // 非 docker 環境且 DB 存儲，直接讀 db 配置
   const storage = getStorage();
   let adminConfig: AdminConfig | null = null;
   if (storage && typeof (storage as any).getAdminConfig === 'function') {
     adminConfig = await (storage as any).getAdminConfig();
   }
   if (adminConfig) {
-    // 合并一些环境变量配置
+    // 合併一些環境變量配置
     adminConfig.SiteConfig.SiteName = process.env.SITE_NAME || 'MoonTV';
     adminConfig.SiteConfig.Announcement =
       process.env.ANNOUNCEMENT ||
-      '本网站仅提供影视信息搜索服务，所有内容均来自第三方网站。本站不存储任何视频资源，不对任何内容的准确性、合法性、完整性负责。';
+      '本網站僅提供影視信息搜索服務，所有內容均來自第三方網站。本站不存儲任何視頻資源，不對任何內容的準確性、合法性、完整性負責。';
     adminConfig.UserConfig.AllowRegister =
       process.env.NEXT_PUBLIC_ENABLE_REGISTER === 'true';
     adminConfig.SiteConfig.ImageProxy =
       process.env.NEXT_PUBLIC_IMAGE_PROXY || '';
 
-    // 合并文件中的源信息
+    // 合併文件中的源信息
     fileConfig = runtimeConfig as unknown as ConfigFileStruct;
     const apiSiteEntries = Object.entries(fileConfig.api_site);
     const existed = new Set((adminConfig.SourceConfig || []).map((s) => s.key));
@@ -254,7 +254,7 @@ export async function getConfig(): Promise<AdminConfig> {
       }
     });
 
-    // 检查现有源是否在 fileConfig.api_site 中，如果不在则标记为 custom
+    // 檢查現有源是否在 fileConfig.api_site 中，如果不在則標記為 custom
     const apiSiteKeys = new Set(apiSiteEntries.map(([key]) => key));
     adminConfig.SourceConfig.forEach((source) => {
       if (!apiSiteKeys.has(source.key)) {
@@ -263,7 +263,7 @@ export async function getConfig(): Promise<AdminConfig> {
     });
     cachedConfig = adminConfig;
   } else {
-    // DB 无配置，执行一次初始化
+    // DB 無配置，執行一次初始化
     await initConfig();
   }
   return cachedConfig;
@@ -271,13 +271,13 @@ export async function getConfig(): Promise<AdminConfig> {
 
 export async function resetConfig() {
   const storage = getStorage();
-  // 获取所有用户名，用于补全 Users
+  // 獲取所有用戶名，用於補全 Users
   let userNames: string[] = [];
   if (storage && typeof (storage as any).getAllUsers === 'function') {
     try {
       userNames = await (storage as any).getAllUsers();
     } catch (e) {
-      console.error('获取用户列表失败:', e);
+      console.error('獲取用戶列表失敗:', e);
     }
   }
 
@@ -292,11 +292,11 @@ export async function resetConfig() {
     fileConfig = JSON.parse(raw) as ConfigFileStruct;
     console.log('load dynamic config success');
   } else {
-    // 默认使用编译时生成的配置
+    // 默認使用編譯時生成的配置
     fileConfig = runtimeConfig as unknown as ConfigFileStruct;
   }
 
-  // 从文件中获取源信息，用于补全源
+  // 從文件中獲取源信息，用於補全源
   const apiSiteEntries = Object.entries(fileConfig.api_site);
   let allUsers = userNames.map((uname) => ({
     username: uname,
@@ -315,7 +315,7 @@ export async function resetConfig() {
       SiteName: process.env.SITE_NAME || 'MoonTV',
       Announcement:
         process.env.ANNOUNCEMENT ||
-        '本网站仅提供影视信息搜索服务，所有内容均来自第三方网站。本站不存储任何视频资源，不对任何内容的准确性、合法性、完整性负责。',
+        '本網站僅提供影視信息搜索服務，所有內容均來自第三方網站。本站不存儲任何視頻資源，不對任何內容的準確性、合法性、完整性負責。',
       SearchDownstreamMaxPage:
         Number(process.env.NEXT_PUBLIC_SEARCH_MAX_PAGE) || 5,
       SiteInterfaceCacheTime: fileConfig.cache_time || 7200,
@@ -339,7 +339,7 @@ export async function resetConfig() {
     await (storage as any).setAdminConfig(adminConfig);
   }
   if (cachedConfig == null) {
-    // serverless 环境，直接使用 adminConfig
+    // serverless 環境，直接使用 adminConfig
     cachedConfig = adminConfig;
   }
   cachedConfig.SiteConfig = adminConfig.SiteConfig;
