@@ -53,7 +53,7 @@ const DoubanCustomSelector: React.FC<DoubanCustomSelectorProps> = ({
       return 0;
     });
     return sortedTypes.map((type) => ({
-      label: type === 'movie' ? '电影' : '剧集',
+      label: type === 'movie' ? '電影' : '劇集',
       value: type,
     }));
   }, [customCategories]);
@@ -282,7 +282,7 @@ const DoubanCustomSelector: React.FC<DoubanCustomSelectorProps> = ({
         {/* 一级选择器 */}
         <div className='flex flex-col sm:flex-row sm:items-center gap-2'>
           <span className='text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400 min-w-[48px]'>
-            类型
+            類型
           </span>
           <div className='overflow-x-auto'>
             {renderCapsuleSelector(
@@ -298,7 +298,7 @@ const DoubanCustomSelector: React.FC<DoubanCustomSelectorProps> = ({
         {secondaryOptions.length > 0 && (
           <div className='flex flex-col sm:flex-row sm:items-center gap-2'>
             <span className='text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400 min-w-[48px]'>
-              片单
+              片單
             </span>
             <div ref={secondaryScrollContainerRef} className='overflow-x-auto'>
               {renderCapsuleSelector(

@@ -91,12 +91,12 @@ export async function POST(req: NextRequest) {
 
       const { password } = await req.json();
       if (typeof password !== 'string') {
-        return NextResponse.json({ error: '密码不能为空' }, { status: 400 });
+        return NextResponse.json({ error: '密碼不得為空' }, { status: 400 });
       }
 
       if (password !== envPassword) {
         return NextResponse.json(
-          { ok: false, error: '密码错误' },
+          { ok: false, error: '密碼錯誤' },
           { status: 401 }
         );
       }
@@ -127,10 +127,10 @@ export async function POST(req: NextRequest) {
     const { username, password } = await req.json();
 
     if (!username || typeof username !== 'string') {
-      return NextResponse.json({ error: '用户名不能为空' }, { status: 400 });
+      return NextResponse.json({ error: '用戶名不得為空' }, { status: 400 });
     }
     if (!password || typeof password !== 'string') {
-      return NextResponse.json({ error: '密码不能为空' }, { status: 400 });
+      return NextResponse.json({ error: '密碼不得為空' }, { status: 400 });
     }
 
     // 可能是站长，直接读环境变量
@@ -159,13 +159,13 @@ export async function POST(req: NextRequest) {
 
       return response;
     } else if (username === process.env.USERNAME) {
-      return NextResponse.json({ error: '用户名或密码错误' }, { status: 401 });
+      return NextResponse.json({ error: '用戶名或密碼錯誤' }, { status: 401 });
     }
 
     const config = await getConfig();
     const user = config.UserConfig.Users.find((u) => u.username === username);
     if (user && user.banned) {
-      return NextResponse.json({ error: '用户被封禁' }, { status: 401 });
+      return NextResponse.json({ error: '用戶已被封鎖' }, { status: 401 });
     }
 
     // 校验用户密码
@@ -173,7 +173,7 @@ export async function POST(req: NextRequest) {
       const pass = await db.verifyUser(username, password);
       if (!pass) {
         return NextResponse.json(
-          { error: '用户名或密码错误' },
+          { error: '用戶名或密碼錯誤' },
           { status: 401 }
         );
       }
@@ -199,11 +199,11 @@ export async function POST(req: NextRequest) {
 
       return response;
     } catch (err) {
-      console.error('数据库验证失败', err);
-      return NextResponse.json({ error: '数据库错误' }, { status: 500 });
+      console.error('資料庫驗證失敗', err);
+      return NextResponse.json({ error: '資料庫錯誤' }, { status: 500 });
     }
   } catch (error) {
-    console.error('登录接口异常', error);
-    return NextResponse.json({ error: '服务器错误' }, { status: 500 });
+    console.error('登入介面異常', error);
+    return NextResponse.json({ error: '伺服器錯誤' }, { status: 500 });
   }
 }

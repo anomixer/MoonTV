@@ -11,8 +11,42 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: 'Missing image URL' }, { status: 400 });
   }
 
+  // Security: allowlist remote hosts to avoid open proxy abuse
+  let target: URL;
   try {
-    const imageResponse = await fetch(imageUrl, {
+    target = new URL(imageUrl);
+  } catch {
+    return NextResponse.json({ error: 'Invalid image URL' }, { status: 400 });
+  }
+
+  // Only allow http/https schemes
+  if (target.protocol !== 'http:' && target.protocol !== 'https:') {
+    return NextResponse.json({ error: 'Unsupported protocol' }, { status: 400 });
+  }
+
+  const allowedHosts = new Set<string>([
+    // Douban domains commonly used for posters/images
+    'movie.douban.com',
+    'm.douban.com',
+    'img9.doubanio.com',
+    'img3.doubanio.com',
+    'img1.doubanio.com',
+    'img2.doubanio.com',
+    'img.doubanio.com',
+    'doubanio.com',
+  ]);
+  const host = target.hostname.toLowerCase();
+  const isAllowed =
+    allowedHosts.has(host) ||
+    /(^|\.)doubanio\.com$/i.test(host) ||
+    /(^|\.)douban\.com$/i.test(host);
+
+  if (!isAllowed) {
+    return NextResponse.json({ error: 'Host not allowed' }, { status: 403 });
+  }
+
+  try {
+    const imageResponse = await fetch(target.toString(), {
       headers: {
         Referer: 'https://movie.douban.com/',
         'User-Agent':

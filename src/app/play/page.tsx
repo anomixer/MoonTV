@@ -45,7 +45,7 @@ function PlayPageClient() {
   const [loadingStage, setLoadingStage] = useState<
     'searching' | 'preferring' | 'fetching' | 'ready'
   >('searching');
-  const [loadingMessage, setLoadingMessage] = useState('正在搜索播放源...');
+  const [loadingMessage, setLoadingMessage] = useState('正在搜尋播放源...');
   const [error, setError] = useState<string | null>(null);
   const [detail, setDetail] = useState<SearchResult | null>(null);
 
@@ -469,8 +469,8 @@ function PlayPageClient() {
       if (!newConfig.enable && !newConfig.intro_time && !newConfig.outro_time) {
         await deleteSkipConfig(currentSourceRef.current, currentIdRef.current);
         artPlayerRef.current.setting.update({
-          name: '跳过片头片尾',
-          html: '跳过片头片尾',
+          name: '跳過片頭片尾',
+          html: '跳過片頭片尾',
           switch: skipConfigRef.current.enable,
           onSwitch: function (item: any) {
             const newConfig = {
@@ -482,12 +482,12 @@ function PlayPageClient() {
           },
         });
         artPlayerRef.current.setting.update({
-          name: '设置片头',
-          html: '设置片头',
+          name: '設定片頭',
+          html: '設定片頭',
           icon: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="5" cy="12" r="2" fill="#ffffff"/><path d="M9 12L17 12" stroke="#ffffff" stroke-width="2"/><path d="M17 6L17 18" stroke="#ffffff" stroke-width="2"/></svg>',
           tooltip:
             skipConfigRef.current.intro_time === 0
-              ? '设置片头时间'
+              ? '設定片頭時間'
               : `${formatTime(skipConfigRef.current.intro_time)}`,
           onClick: function () {
             const currentTime = artPlayerRef.current?.currentTime || 0;
@@ -502,12 +502,12 @@ function PlayPageClient() {
           },
         });
         artPlayerRef.current.setting.update({
-          name: '设置片尾',
-          html: '设置片尾',
+          name: '設定片尾',
+          html: '設定片尾',
           icon: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 6L7 18" stroke="#ffffff" stroke-width="2"/><path d="M7 12L15 12" stroke="#ffffff" stroke-width="2"/><circle cx="19" cy="12" r="2" fill="#ffffff"/></svg>',
           tooltip:
             skipConfigRef.current.outro_time >= 0
-              ? '设置片尾时间'
+              ? '設定片尾時間'
               : `-${formatTime(-skipConfigRef.current.outro_time)}`,
           onClick: function () {
             const outroTime =
@@ -661,8 +661,8 @@ function PlayPageClient() {
       setLoadingStage(currentSource && currentId ? 'fetching' : 'searching');
       setLoadingMessage(
         currentSource && currentId
-          ? '🎬 正在获取视频详情...'
-          : '🔍 正在搜索播放源...'
+          ? '🎬 正在獲取視頻詳情...'
+          : '🔍 正在搜尋播放源...'
       );
 
       let sourcesInfo = await fetchSourcesData(searchTitle || videoTitle);
@@ -702,7 +702,7 @@ function PlayPageClient() {
         optimizationEnabled
       ) {
         setLoadingStage('preferring');
-        setLoadingMessage('⚡ 正在优选最佳播放源...');
+        setLoadingMessage('⚡ 正在優選最佳播放源...');
 
         detailData = await preferBestSource(sourcesInfo);
       }
@@ -730,7 +730,7 @@ function PlayPageClient() {
       window.history.replaceState({}, '', newUrl.toString());
 
       setLoadingStage('ready');
-      setLoadingMessage('✨ 准备就绪，即将开始播放...');
+      setLoadingMessage('✨ 準備就緒，即將開始播放...');
 
       // 短暂延迟让用户看到完成状态
       setTimeout(() => {
@@ -1251,7 +1251,7 @@ function PlayPageClient() {
         autoPlayback: false,
         airplay: true,
         theme: '#22c55e',
-        lang: 'zh-cn',
+        lang: 'zh-tw',
         hotkey: false,
         fastForward: true,
         autoOrientation: true,
@@ -1319,9 +1319,9 @@ function PlayPageClient() {
         },
         settings: [
           {
-            html: '去广告',
+            html: '去廣告',
             icon: '<text x="50%" y="50%" font-size="20" font-weight="bold" text-anchor="middle" dominant-baseline="middle" fill="#ffffff">AD</text>',
-            tooltip: blockAdEnabled ? '已开启' : '已关闭',
+            tooltip: blockAdEnabled ? '已開啟' : '已關閉',
             onClick() {
               const newVal = !blockAdEnabled;
               try {
@@ -1341,12 +1341,12 @@ function PlayPageClient() {
               } catch (_) {
                 // ignore
               }
-              return newVal ? '当前开启' : '当前关闭';
+              return newVal ? '目前開啟' : '目前關閉';
             },
           },
           {
-            name: '跳过片头片尾',
-            html: '跳过片头片尾',
+            name: '跳過片頭片尾',
+            html: '跳過片頭片尾',
             switch: skipConfigRef.current.enable,
             onSwitch: function (item) {
               const newConfig = {
@@ -1358,7 +1358,7 @@ function PlayPageClient() {
             },
           },
           {
-            html: '删除跳过配置',
+            html: '刪除跳過配置',
             onClick: function () {
               handleSkipConfigChange({
                 enable: false,
@@ -1369,12 +1369,12 @@ function PlayPageClient() {
             },
           },
           {
-            name: '设置片头',
-            html: '设置片头',
+            name: '設定片頭',
+            html: '設定片頭',
             icon: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="5" cy="12" r="2" fill="#ffffff"/><path d="M9 12L17 12" stroke="#ffffff" stroke-width="2"/><path d="M17 6L17 18" stroke="#ffffff" stroke-width="2"/></svg>',
             tooltip:
               skipConfigRef.current.intro_time === 0
-                ? '设置片头时间'
+                ? '設定片頭時間'
                 : `${formatTime(skipConfigRef.current.intro_time)}`,
             onClick: function () {
               const currentTime = artPlayerRef.current?.currentTime || 0;
@@ -1389,12 +1389,12 @@ function PlayPageClient() {
             },
           },
           {
-            name: '设置片尾',
-            html: '设置片尾',
+            name: '設定片尾',
+            html: '設定片尾',
             icon: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 6L7 18" stroke="#ffffff" stroke-width="2"/><path d="M7 12L15 12" stroke="#ffffff" stroke-width="2"/><circle cx="19" cy="12" r="2" fill="#ffffff"/></svg>',
             tooltip:
               skipConfigRef.current.outro_time >= 0
-                ? '设置片尾时间'
+                ? '設定片尾時間'
                 : `-${formatTime(-skipConfigRef.current.outro_time)}`,
             onClick: function () {
               const outroTime =
@@ -1496,7 +1496,7 @@ function PlayPageClient() {
           currentTime < skipConfigRef.current.intro_time
         ) {
           artPlayerRef.current.currentTime = skipConfigRef.current.intro_time;
-          artPlayerRef.current.notice.show = `已跳过片头 (${formatTime(
+          artPlayerRef.current.notice.show = `已跳過片頭 (${formatTime(
             skipConfigRef.current.intro_time
           )})`;
         }
@@ -1516,7 +1516,7 @@ function PlayPageClient() {
           } else {
             artPlayerRef.current.pause();
           }
-          artPlayerRef.current.notice.show = `已跳过片尾 (${formatTime(
+          artPlayerRef.current.notice.show = `已跳過片尾 (${formatTime(
             skipConfigRef.current.outro_time
           )})`;
         }
@@ -1764,7 +1764,7 @@ function PlayPageClient() {
               }
               className='group relative flex items-center space-x-1.5 px-3 py-1.5 rounded-full bg-white/80 hover:bg-white dark:bg-gray-800/80 dark:hover:bg-gray-800 backdrop-blur-sm border border-gray-200/50 dark:border-gray-700/50 shadow-sm hover:shadow-md transition-all duration-200'
               title={
-                isEpisodeSelectorCollapsed ? '显示选集面板' : '隐藏选集面板'
+                isEpisodeSelectorCollapsed ? '顯示選集面板' : '隱藏選集面板'
               }
             >
               <svg
@@ -1783,7 +1783,7 @@ function PlayPageClient() {
                 />
               </svg>
               <span className='text-xs font-medium text-gray-600 dark:text-gray-300'>
-                {isEpisodeSelectorCollapsed ? '显示' : '隐藏'}
+                {isEpisodeSelectorCollapsed ? '顯示' : '隱藏'}
               </span>
 
               {/* 精致的状态指示点 */}
@@ -1938,6 +1938,7 @@ function PlayPageClient() {
                     src={processImageUrl(videoCover)}
                     alt={videoTitle}
                     className='w-full h-full object-cover'
+                    referrerPolicy='no-referrer'
                   />
                 ) : (
                   <span className='text-gray-600 dark:text-gray-400'>

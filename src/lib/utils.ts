@@ -34,6 +34,10 @@ export function getImageProxyUrl(): string | null {
 export function processImageUrl(originalUrl: string): string {
   if (!originalUrl) return originalUrl;
 
+  // 僅代理豆瓣圖片，防止非豆瓣的資源站圖片被代理攔截導致 403 錯誤
+  const isDouban = /doubanio\.com|douban\.com/i.test(originalUrl);
+  if (!isDouban) return originalUrl;
+
   const proxyUrl = getImageProxyUrl();
   if (!proxyUrl) return originalUrl;
 

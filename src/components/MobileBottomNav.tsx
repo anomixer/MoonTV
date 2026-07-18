@@ -21,21 +21,21 @@ const MobileBottomNav = ({ activePath }: MobileBottomNavProps) => {
   const currentActive = activePath ?? pathname;
 
   const [navItems, setNavItems] = useState([
-    { icon: Home, label: '首页', href: '/' },
-    { icon: Search, label: '搜索', href: '/search' },
+    { icon: Home, label: '首頁', href: '/' },
+    { icon: Search, label: '搜尋', href: '/search' },
     {
       icon: Film,
-      label: '电影',
+      label: '電影',
       href: '/douban?type=movie',
     },
     {
       icon: Tv,
-      label: '剧集',
+      label: '劇集',
       href: '/douban?type=tv',
     },
     {
       icon: Clover,
-      label: '综艺',
+      label: '綜藝',
       href: '/douban?type=show',
     },
   ]);
@@ -43,11 +43,11 @@ const MobileBottomNav = ({ activePath }: MobileBottomNavProps) => {
   useEffect(() => {
     const runtimeConfig = (window as any).RUNTIME_CONFIG;
     if (runtimeConfig?.CUSTOM_CATEGORIES?.length > 0) {
-      setNavItems((prevItems) => [
+          setNavItems((prevItems) => [
         ...prevItems,
         {
           icon: Star,
-          label: '自定义',
+          label: '自訂',
           href: '/douban?type=custom',
         },
       ]);

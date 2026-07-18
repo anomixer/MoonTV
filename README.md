@@ -4,7 +4,7 @@
   <img src="public/logo.png" alt="LibreTV Logo" width="120">
 </div>
 
-> 🎬 **MoonTV** 是一个开箱即用的、跨平台的影视聚合播放器。它基于 **Next.js 14** + **Tailwind&nbsp;CSS** + **TypeScript** 构建，支持多资源搜索、在线播放、收藏同步、播放记录、本地/云端存储，让你可以随时随地畅享海量免费影视内容。
+> 🎬 **MoonTV** 是一個開箱即用的、跨平台的影視聚合播放器。它基於 **Next.js 14** + **Tailwind CSS** + **TypeScript** 構建，支援多資源搜尋、線上播放、收藏同步、播放記錄、本機/雲端儲存，讓你可以隨時隨地暢享海量免費影視內容。
 
 <div align="center">
 
@@ -20,130 +20,109 @@
 
 ## ✨ 功能特性
 
-- 🔍 **多源聚合搜索**：内置数十个免费资源站点，一次搜索立刻返回全源结果。
-- 📄 **丰富详情页**：支持剧集列表、演员、年份、简介等完整信息展示。
-- ▶️ **流畅在线播放**：集成 HLS.js & ArtPlayer。
-- ❤️ **收藏 + 继续观看**：支持 Redis/D1/Upstash 存储，多端同步进度。
-- 📱 **PWA**：离线缓存、安装到桌面/主屏，移动端原生体验。
-- 🌗 **响应式布局**：桌面侧边栏 + 移动底部导航，自适应各种屏幕尺寸。
-- 🚀 **极简部署**：一条 Docker 命令即可将完整服务跑起来，或免费部署到 Vercel 和 Cloudflare。
-- 👿 **智能去广告**：自动跳过视频中的切片广告（实验性）
+- 🔍 **多源聚合搜尋**：內建數十個免費資源站點，一次搜尋立即返回全源結果。
+- 📄 **豐富詳情頁**：支援劇集列表、演員、年份、簡介等完整資訊展示。
+- ▶️ **流暢線上播放**：整合 HLS.js & ArtPlayer。
+- ❤️ **收藏 + 繼續觀看**：支援 Redis/D1/Upstash 儲存，多端同步進度。
+- 📱 **PWA**：離線快取、安裝到桌面/主畫面，行動端原生體驗。
+- 🌗 **響應式佈局**：桌面側邊欄 + 行動底部導覽，自適應各種螢幕尺寸。
+- 🚀 **極簡部署**：一條 Docker 指令即可將完整服務跑起來，或免費部署到 Vercel 與 Cloudflare。
+- 👿 **智慧去廣告**：自動跳過影片中的切片廣告（實驗性）
 
 <details>
-  <summary>点击查看项目截图</summary>
-  <img src="public/screenshot1.png" alt="项目截图" style="max-width:600px">
-  <img src="public/screenshot2.png" alt="项目截图" style="max-width:600px">
-  <img src="public/screenshot3.png" alt="项目截图" style="max-width:600px">
+  <summary>點擊查看專案截圖</summary>
+  <img src="public/screenshot1.png" alt="專案截圖" style="max-width:600px">
+  <img src="public/screenshot2.png" alt="專案截圖" style="max-width:600px">
+  <img src="public/screenshot3.png" alt="專案截圖" style="max-width:600px">
 </details>
 
-## 🗺 目录
+## 🗺 目錄
 
-- [技术栈](#技术栈)
+- [技術棧](#技術棧)
 - [部署](#部署)
-- [Docker Compose 最佳实践](#Docker-Compose-最佳实践)
-- [环境变量](#环境变量)
-- [配置说明](#配置说明)
-- [管理员配置](#管理员配置)
-- [AndroidTV 使用](#AndroidTV-使用)
+- [Docker Compose 最佳實踐](#docker-compose-最佳實踐)
+- [環境變數](#環境變數)
+- [設定說明](#設定說明)
+- [管理員設定](#管理員設定)
+- [AndroidTV 使用](#androidtv-使用)
 - [Roadmap](#roadmap)
-- [安全与隐私提醒](#安全与隐私提醒)
+- [安全與隱私提醒](#安全與隱私提醒)
 - [License](#license)
-- [致谢](#致谢)
+- [致謝](#致謝)
 
-## 技术栈
+## 技術棧
 
-| 分类      | 主要依赖                                                                                              |
+| 分類      | 主要依賴                                                                                              |
 | --------- | ----------------------------------------------------------------------------------------------------- |
 | 前端框架  | [Next.js 14](https://nextjs.org/) · App Router                                                        |
-| UI & 样式 | [Tailwind&nbsp;CSS 3](https://tailwindcss.com/)                                                       |
-| 语言      | TypeScript 4                                                                                          |
+| UI & 樣式 | [Tailwind CSS 3](https://tailwindcss.com/)                                                            |
+| 語言      | TypeScript 4                                                                                          |
 | 播放器    | [ArtPlayer](https://github.com/zhw2590582/ArtPlayer) · [HLS.js](https://github.com/video-dev/hls.js/) |
-| 代码质量  | ESLint · Prettier · Jest                                                                              |
-| 部署      | Docker · Vercel · CloudFlare pages                                                                    |
+| 程式碼品質 | ESLint · Prettier · Jest                                                                              |
+| 部署      | Docker · Cloudflare Pages                                                                             |
 
 ## 部署
 
-本项目**支持 Vercel、Docker 和 Cloudflare** 部署。
+本專案推薦使用 **Cloudflare Pages 或 Docker** 進行部署。
 
-存储支持矩阵
+儲存支援矩陣
 
-|               | Docker | Vercel | Cloudflare |
-| :-----------: | :----: | :----: | :--------: |
-| localstorage  |   ✅   |   ✅   |     ✅     |
-|  原生 redis   |   ✅   |        |            |
-| Cloudflare D1 |        |        |     ✅     |
-| Upstash Redis |   ☑️   |   ✅   |     ☑️     |
+|               | Docker | Cloudflare |
+| :-----------: | :----: | :--------: |
+| localstorage  |   ✅   |     ✅     |
+| 原生 redis    |   ✅   |            |
+| Cloudflare D1 |        |     ✅     |
+| Upstash Redis |   ☑️   |     ☑️     |
 
-✅：经测试支持
+✅：經測試支援
 
-☑️：理论上支持，未测试
+☑️：理論上支援，未測試
 
-除 localstorage 方式外，其他方式都支持多账户、记录同步和管理页面
+除 localstorage 方式外，其他方式皆支援多帳戶、記錄同步與管理頁面
 
-### Vercel 部署
+### Cloudflare 部署 (推薦)
 
-#### 普通部署（localstorage）
 
-1. **Fork** 本仓库到你的 GitHub 账户。
-2. 登陆 [Vercel](https://vercel.com/)，点击 **Add New → Project**，选择 Fork 后的仓库。
-3. 设置 PASSWORD 环境变量。
-4. 保持默认设置完成首次部署。
-5. 如需自定义 `config.json`，请直接修改 Fork 后仓库中该文件。
-6. 每次 Push 到 `main` 分支将自动触发重新构建。
-
-部署完成后即可通过分配的域名访问，也可以绑定自定义域名。
-
-#### Upstash Redis 支持
-
-0. 完成普通部署并成功访问。
-1. 在 [upstash](https://upstash.com/) 注册账号并新建一个 Redis 实例，名称任意。
-2. 复制新数据库的 **HTTPS ENDPOINT 和 TOKEN**
-3. 返回你的 Vercel 项目，新增环境变量 **UPSTASH_URL 和 UPSTASH_TOKEN**，值为第二步复制的 endpoint 和 token
-4. 设置环境变量 NEXT_PUBLIC_STORAGE_TYPE，值为 **upstash**；设置 USERNAME 和 PASSWORD 作为站长账号
-5. 重试部署
-
-### Cloudflare 部署
-
-**Cloudflare Pages 的环境变量尽量设置为密钥而非文本**
+**Cloudflare Pages 的環境變數儘量設定為密鑰而非純文字**
 
 #### 普通部署（localstorage）
 
-1. **Fork** 本仓库到你的 GitHub 账户。
-2. 登陆 [Cloudflare](https://cloudflare.com)，点击 **计算（Workers）-> Workers 和 Pages**，点击创建
-3. 选择 Pages，导入现有的 Git 存储库，选择 Fork 后的仓库
-4. 构建命令填写 **pnpm install --frozen-lockfile && pnpm run pages:build**，预设框架为无，**构建输出目录**为 `.vercel/output/static`
-5. 保持默认设置完成首次部署。进入设置，将兼容性标志设置为 `nodejs_compat`，无需选择，直接粘贴
-6. 首次部署完成后进入设置，新增 PASSWORD 密钥（变量和机密下），而后重试部署。
-7. 如需自定义 `config.json`，请直接修改 Fork 后仓库中该文件。
-8. 每次 Push 到 `main` 分支将自动触发重新构建。
+1. **Fork** 本倉庫到你的 GitHub 帳號。
+2. 登入 [Cloudflare](https://cloudflare.com)，點擊 **計算（Workers）→ Workers 和 Pages**，點擊建立。
+3. 選擇 Pages，匯入現有 Git 儲存庫，選擇 Fork 後的倉庫。
+4. 建置指令填入 **pnpm install --frozen-lockfile && pnpm run pages:build**；預設框架為「無」，**建置輸出目錄**為 `.vercel/output/static`。
+5. 保持預設設定完成首次部署。進入設定，將相容性旗標設定為 `nodejs_compat`（直接貼上即可）。
+6. 首次部署完成後，進入設定新增 PASSWORD 密鑰（變數與機密），再重新部署。
+7. 若需自訂 `config.json`，請直接修改 Fork 後倉庫中的該檔案。
+8. 每次 Push 至 `main` 分支將自動觸發重新建置。
 
-#### D1 支持
+#### D1 支援
 
-0. 完成普通部署并成功访问
-1. 点击 **存储和数据库 -> D1 SQL 数据库**，创建一个新的数据库，名称随意
-2. 进入刚创建的数据库，点击左上角的 Explore Data，将[D1 初始化](D1初始化.md) 中的内容粘贴到 Query 窗口后点击 **Run All**，等待运行完成
-3. 返回你的 pages 项目，进入 **设置 -> 绑定**，添加绑定 D1 数据库，选择你刚创建的数据库，变量名称填 **DB**
-4. 设置环境变量 NEXT_PUBLIC_STORAGE_TYPE，值为 **d1**；设置 USERNAME 和 PASSWORD 作为站长账号
-5. 重试部署
+0. 完成普通部署並成功訪問。
+1. 點擊 **儲存和資料庫 → D1 SQL 資料庫**，建立新的資料庫，名稱隨意。
+2. 進入剛建立的資料庫，點擊左上角的 Explore Data，將 [D1 初始化](D1初始化.md) 內容貼到 Query 視窗後點擊 **Run All**，等待執行完成。
+3. 回到你的 Pages 專案，進入 **設定 → 綁定**，新增綁定 D1 資料庫，選擇剛建立的資料庫，變數名稱填 **DB**。
+4. 設定環境變數 NEXT_PUBLIC_STORAGE_TYPE 為 **d1**；設定 USERNAME 與 PASSWORD 作為站長帳號。
+5. 重新部署。
 
 ### Docker 部署
 
-#### 1. 直接运行（最简单，localstorage）
+#### 1. 直接執行（最簡單，localstorage）
 
 ```bash
-# 拉取预构建镜像
+# 拉取預建置映像
 docker pull ghcr.io/senshinya/moontv:latest
 
-# 运行容器
-# -d: 后台运行  -p: 映射端口 3000 -> 3000
+# 執行容器
+# -d: 背景執行  -p: 對應埠 3000 -> 3000
 docker run -d --name moontv -p 3000:3000 --env PASSWORD=your_password ghcr.io/senshinya/moontv:latest
 ```
 
-访问 `http://服务器 IP:3000` 即可。（需自行到服务器控制台放通 `3000` 端口）
+造訪 `http://伺服器 IP:3000` 即可。（需自行於伺服器控制台開放 `3000` 埠）
 
-## Docker Compose 最佳实践
+## Docker Compose 最佳實踐
 
-若你使用 docker compose 部署，以下是一些 compose 示例
+若你使用 docker compose 部署，以下為部分 compose 範例
 
 ### local storage 版本
 
@@ -157,12 +136,12 @@ services:
       - '3000:3000'
     environment:
       - PASSWORD=your_password
-    # 如需自定义配置，可挂载文件
+    # 若需自訂設定，可掛載檔案
     # volumes:
     #   - ./config.json:/app/config.json:ro
 ```
 
-### Redis 版本（推荐，多账户数据隔离，跨设备同步）
+### Redis 版本（推薦，多帳戶資料隔離，跨裝置同步）
 
 ```yaml
 services:
@@ -182,7 +161,7 @@ services:
       - moontv-network
     depends_on:
       - moontv-redis
-    # 如需自定义配置，可挂载文件
+    # 若需自訂設定，可掛載檔案
     # volumes:
     #   - ./config.json:/app/config.json:ro
   moontv-redis:
@@ -191,7 +170,7 @@ services:
     restart: unless-stopped
     networks:
       - moontv-network
-    # 如需持久化
+    # 若需持久化
     # volumes:
     #   - ./data:/data
 networks:
@@ -199,33 +178,33 @@ networks:
     driver: bridge
 ```
 
-## 自动同步最近更改
+## 自動同步最近更改
 
-建议在 fork 的仓库中启用本仓库自带的 GitHub Actions 自动同步功能（见 `.github/workflows/sync.yml`）。
+建議在 fork 的倉庫中啟用本倉庫自帶的 GitHub Actions 自動同步功能（見 `.github/workflows/sync.yml`）。
 
-如需手动同步主仓库更新，也可以使用 GitHub 官方的 [Sync fork](https://docs.github.com/cn/github/collaborating-with-issues-and-pull-requests/syncing-a-fork) 功能。
+若需手動同步主倉庫更新，也可以使用 GitHub 官方的 [Sync fork](https://docs.github.com/cn/github/collaborating-with-issues-and-pull-requests/syncing-a-fork) 功能。
 
-## 环境变量
+## 環境變數
 
-| 变量                              | 说明                                         | 可选值                           | 默认值                                                                                                                     |
+| 變數                              | 說明                                         | 可選值                           | 預設值                                                                                                                     |
 | --------------------------------- | -------------------------------------------- | -------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
-| USERNAME                          | 非 localstorage 部署时的管理员账号           | 任意字符串                       | （空）                                                                                                                     |
-| PASSWORD                          | 非 localstorage 部署时为管理员密码           | 任意字符串                       | （空）                                                                                                                     |
-| SITE_NAME                         | 站点名称                                     | 任意字符串                       | MoonTV                                                                                                                     |
-| ANNOUNCEMENT                      | 站点公告                                     | 任意字符串                       | 本网站仅提供影视信息搜索服务，所有内容均来自第三方网站。本站不存储任何视频资源，不对任何内容的准确性、合法性、完整性负责。 |
-| NEXT_PUBLIC_STORAGE_TYPE          | 播放记录/收藏的存储方式                      | localstorage、redis、d1、upstash | localstorage                                                                                                               |
-| REDIS_URL                         | redis 连接 url                               | 连接 url                         | 空                                                                                                                         |
-| UPSTASH_URL                       | upstash redis 连接 url                       | 连接 url                         | 空                                                                                                                         |
-| UPSTASH_TOKEN                     | upstash redis 连接 token                     | 连接 token                       | 空                                                                                                                         |
-| NEXT_PUBLIC_ENABLE_REGISTER       | 是否开放注册，仅在非 localstorage 部署时生效 | true / false                     | false                                                                                                                      |
-| NEXT_PUBLIC_SEARCH_MAX_PAGE       | 搜索接口可拉取的最大页数                     | 1-50                             | 5                                                                                                                          |
-| NEXT_PUBLIC_IMAGE_PROXY           | 默认的浏览器端图片代理                       | url prefix                       | (空)                                                                                                                       |
-| NEXT_PUBLIC_DOUBAN_PROXY          | 默认的浏览器端豆瓣数据代理                   | url prefix                       | (空)                                                                                                                       |
-| NEXT_PUBLIC_DISABLE_YELLOW_FILTER | 关闭色情内容过滤                             | true/false                       | false                                                                                                                      |
+| USERNAME                          | 非 localstorage 部署時的管理員帳號           | 任意字串                         | （空）                                                                                                                     |
+| PASSWORD                          | 非 localstorage 部署時為管理員密碼           | 任意字串                         | （空）                                                                                                                     |
+| SITE_NAME                         | 站點名稱                                     | 任意字串                         | MoonTV                                                                                                                     |
+| ANNOUNCEMENT                      | 站點公告                                     | 任意字串                         | 本網站僅提供影視搜尋服務，所有內容均來自第三方網站。本站不儲存任何影片資源，不對任何內容之準確性、合法性、完整性負責。 |
+| NEXT_PUBLIC_STORAGE_TYPE          | 播放記錄/收藏的儲存方式                      | localstorage、redis、d1、upstash | localstorage                                                                                                               |
+| REDIS_URL                         | redis 連線 URL                               | 連線 URL                         | 空                                                                                                                         |
+| UPSTASH_URL                       | upstash redis 連線 URL                       | 連線 URL                         | 空                                                                                                                         |
+| UPSTASH_TOKEN                     | upstash redis 連線 Token                     | 連線 Token                       | 空                                                                                                                         |
+| NEXT_PUBLIC_ENABLE_REGISTER       | 是否開放註冊（僅非 localstorage 有效）       | true / false                     | false                                                                                                                      |
+| NEXT_PUBLIC_SEARCH_MAX_PAGE       | 搜尋介面可拉取的最大頁數                     | 1-50                             | 5                                                                                                                          |
+| NEXT_PUBLIC_IMAGE_PROXY           | 預設的瀏覽器端圖片代理                       | URL 前綴                         | （空）                                                                                                                     |
+| NEXT_PUBLIC_DOUBAN_PROXY          | 預設的瀏覽器端豆瓣資料代理                   | URL 前綴                         | （空）                                                                                                                     |
+| NEXT_PUBLIC_DISABLE_YELLOW_FILTER | 關閉色情內容過濾                             | true/false                       | false                                                                                                                      |
 
-## 配置说明
+## 設定說明
 
-所有可自定义项集中在根目录的 `config.json` 中：
+所有可自訂項集中在根目錄的 `config.json`：
 
 ```json
 {
@@ -233,96 +212,96 @@ networks:
   "api_site": {
     "dyttzy": {
       "api": "http://caiji.dyttzyapi.com/api.php/provide/vod",
-      "name": "电影天堂资源",
+      "name": "電影天堂資源",
       "detail": "http://caiji.dyttzyapi.com"
     }
-    // ...更多站点
+    // ...更多站點
   },
   "custom_category": [
     {
-      "name": "华语",
+      "name": "華語",
       "type": "movie",
-      "query": "华语"
+      "query": "華語"
     }
   ]
 }
 ```
 
-- `cache_time`：接口缓存时间（秒）。
-- `api_site`：你可以增删或替换任何资源站，字段说明：
-  - `key`：唯一标识，保持小写字母/数字。
-  - `api`：资源站提供的 `vod` JSON API 根地址。
-  - `name`：在人机界面中展示的名称。
-  - `detail`：（可选）部分无法通过 API 获取剧集详情的站点，需要提供网页详情根 URL，用于爬取。
-- `custom_category`：自定义分类配置，用于在导航中添加个性化的影视分类。以 type + query 作为唯一标识。支持以下字段：
-  - `name`：分类显示名称（可选，如不提供则使用 query 作为显示名）
-  - `type`：分类类型，支持 `movie`（电影）或 `tv`（电视剧）
-  - `query`：搜索关键词，用于在豆瓣 API 中搜索相关内容
+- `cache_time`：介面快取時間（秒）。
+- `api_site`：你可以增刪或替換任何資源站，欄位說明：
+  - `key`：唯一識別，保持小寫字母/數字。
+  - `api`：資源站提供的 `vod` JSON API 根地址。
+  - `name`：在介面中顯示的名稱。
+  - `detail`：（可選）部分無法透過 API 取得劇集詳情的站點，需要提供網頁詳情根 URL，用於擷取。
+- `custom_category`：自訂分類設定，用於在導覽中新增個人化影視分類。以 type + query 作為唯一識別。支援以下欄位：
+  - `name`：分類顯示名稱（可選，如不提供則使用 query 作為顯示名）
+  - `type`：分類型別，支援 `movie`（電影）或 `tv`（劇集）
+  - `query`：搜尋關鍵字，用於在豆瓣 API 中搜尋相關內容
 
-custom_category 支持的自定义分类已知如下：
+custom_category 支援的自訂分類已知如下：
 
-- movie：热门、最新、经典、豆瓣高分、冷门佳片、华语、欧美、韩国、日本、动作、喜剧、爱情、科幻、悬疑、恐怖、治愈
-- tv：热门、美剧、英剧、韩剧、日剧、国产剧、港剧、日本动画、综艺、纪录片
+- movie：熱門、最新、經典、豆瓣高分、冷門佳片、華語、歐美、韓國、日本、動作、喜劇、愛情、科幻、懸疑、恐怖、治癒
+- tv：熱門、美劇、英劇、韓劇、日劇、國產劇、港劇、日本動畫、綜藝、紀錄片
 
-也可输入如 "哈利波特" 效果等同于豆瓣搜索
+也可輸入如「哈利波特」，效果等同於豆瓣搜尋
 
-MoonTV 支持标准的苹果 CMS V10 API 格式。
+MoonTV 支援標準的蘋果 CMS V10 API 格式。
 
-修改后 **无需重新构建**，服务会在启动时读取一次。
+修改後 **無需重新建置**，服務會在啟動時讀取一次。
 
-## 管理员配置
+## 管理員設定
 
-**该特性目前仅支持通过非 localstorage 存储的部署方式使用**
+**該特性目前僅支援透過非 localstorage 儲存的部署方式使用**
 
-支持在运行时动态变更服务配置
+支援在執行時動態變更服務設定
 
-设置环境变量 USERNAME 和 PASSWORD 即为站长用户，站长可设置用户为管理员
+設定環境變數 USERNAME 與 PASSWORD 即為站長使用者，站長可設定使用者為管理員
 
-站长或管理员访问 `/admin` 即可进行管理员配置
+站長或管理員訪問 `/admin` 即可進行管理員設定
 
 ## AndroidTV 使用
 
-目前该项目可以配合 [OrionTV](https://github.com/zimplexing/OrionTV) 在 Android TV 上使用，可以直接作为 OrionTV 后端
+目前該專案可以配合 [OrionTV](https://github.com/zimplexing/OrionTV) 在 Android TV 上使用，可以直接作為 OrionTV 後端
 
-暂时收藏夹与播放记录和网页端隔离，后续会支持同步用户数据
+暫時收藏夾與播放記錄和網頁端隔離，後續會支援同步使用者資料
 
 ## Roadmap
 
 - [x] 深色模式
-- [x] 持久化存储
-- [x] 多账户
+- [x] 持久化儲存
+- [x] 多帳戶
 
-## 安全与隐私提醒
+## 安全與隱私提醒
 
-### 请设置密码保护并关闭公网注册
+### 請設定密碼保護並關閉公網註冊
 
-为了您的安全和避免潜在的法律风险，我们要求在部署时设置密码保护并**强烈建议关闭公网注册**：
+為了您的安全與避免潛在法律風險，我們要求在部署時設定密碼保護並**強烈建議關閉公網註冊**：
 
-- **避免公开访问**：不设置密码的实例任何人都可以访问，可能被恶意利用
-- **防范版权风险**：公开的视频搜索服务可能面临版权方的投诉举报
-- **保护个人隐私**：设置密码可以限制访问范围，保护您的使用记录
+- **避免公開訪問**：未設定密碼的實例任何人都可以訪問，可能被惡意利用
+- **防範版權風險**：公開的影片搜尋服務可能面臨版權方的投訴舉報
+- **保護個人隱私**：設定密碼可以限制訪問範圍，保護您的使用記錄
 
 ### 部署要求
 
-1. **设置环境变量 `PASSWORD`**：为您的实例设置一个强密码
-2. **仅供个人使用**：请勿将您的实例链接公开分享或传播
-3. **遵守当地法律**：请确保您的使用行为符合当地法律法规
+1. **設定環境變數 `PASSWORD`**：為您的實例設定一個強密碼
+2. **僅供個人使用**：請勿將您的實例連結公開分享或傳播
+3. **遵守當地法律**：請確保您的使用行為符合當地法律法規
 
-### 重要声明
+### 重要聲明
 
-- 本项目仅供学习和个人使用
-- 请勿将部署的实例用于商业用途或公开服务
-- 如因公开分享导致的任何法律问题，用户需自行承担责任
-- 项目开发者不对用户的使用行为承担任何法律责任
+- 本專案僅供學習與個人使用
+- 請勿將部署的實例用於商業用途或公開服務
+- 如因公開分享導致的任何法律問題，使用者需自行承擔責任
+- 專案開發者不對使用者的使用行為承擔任何法律責任
 
 ## License
 
 [MIT](LICENSE) © 2025 MoonTV & Contributors
 
-## 致谢
+## 致謝
 
-- [ts-nextjs-tailwind-starter](https://github.com/theodorusclarence/ts-nextjs-tailwind-starter) — 项目最初基于该脚手架。
-- [LibreTV](https://github.com/LibreSpark/LibreTV) — 由此启发，站在巨人的肩膀上。
-- [ArtPlayer](https://github.com/zhw2590582/ArtPlayer) — 提供强大的网页视频播放器。
-- [HLS.js](https://github.com/video-dev/hls.js) — 实现 HLS 流媒体在浏览器中的播放支持。
-- 感谢所有提供免费影视接口的站点。
+- [ts-nextjs-tailwind-starter](https://github.com/theodorusclarence/ts-nextjs-tailwind-starter) — 專案最初基於該腳手架。
+- [LibreTV](https://github.com/LibreSpark/LibreTV) — 受到啟發，站在巨人肩膀上。
+- [ArtPlayer](https://github.com/zhw2590582/ArtPlayer) — 強大的網頁影片播放器。
+- [HLS.js](https://github.com/video-dev/hls.js) — 讓瀏覽器支援 HLS 串流播放。
+- 感謝所有提供免費影視介面之站點。

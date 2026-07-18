@@ -24,7 +24,7 @@ export const UserMenu: React.FC = () => {
   const [storageType, setStorageType] = useState<string>('localstorage');
   const [mounted, setMounted] = useState(false);
 
-  // 设置相关状态
+  // 設定相關狀態
   const [defaultAggregateSearch, setDefaultAggregateSearch] = useState(true);
   const [doubanProxyUrl, setDoubanProxyUrl] = useState('');
   const [imageProxyUrl, setImageProxyUrl] = useState('');
@@ -32,22 +32,22 @@ export const UserMenu: React.FC = () => {
   const [enableImageProxy, setEnableImageProxy] = useState(false);
   const [enableDoubanProxy, setEnableDoubanProxy] = useState(false);
 
-  // 修改密码相关状态
+  // 修改密碼相關狀態
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [passwordLoading, setPasswordLoading] = useState(false);
   const [passwordError, setPasswordError] = useState('');
 
-  // 版本检查相关状态
+  // 版本檢查相關狀態
   const [updateStatus, setUpdateStatus] = useState<UpdateStatus | null>(null);
   const [isChecking, setIsChecking] = useState(true);
 
-  // 确保组件已挂载
+  // 確保元件已掛載
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  // 获取认证信息和存储类型
+  // 取得認證資訊與儲存類型
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const auth = getAuthInfoFromBrowserCookie();
@@ -59,7 +59,7 @@ export const UserMenu: React.FC = () => {
     }
   }, []);
 
-  // 从 localStorage 读取设置
+  // 從 localStorage 讀取設定
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const savedAggregateSearch = localStorage.getItem(
@@ -109,7 +109,7 @@ export const UserMenu: React.FC = () => {
     }
   }, []);
 
-  // 版本检查
+  // 版本檢查
   useEffect(() => {
     const checkUpdate = async () => {
       try {
@@ -140,7 +140,7 @@ export const UserMenu: React.FC = () => {
         headers: { 'Content-Type': 'application/json' },
       });
     } catch (error) {
-      console.error('注销请求失败:', error);
+      console.error('登出請求失敗:', error);
     }
     window.location.href = '/';
   };
@@ -217,7 +217,7 @@ export const UserMenu: React.FC = () => {
     setIsSettingsOpen(false);
   };
 
-  // 设置相关的处理函数
+  // 設定相關的處理函式
   const handleAggregateToggle = (value: boolean) => {
     setDefaultAggregateSearch(value);
     if (typeof window !== 'undefined') {
@@ -288,23 +288,23 @@ export const UserMenu: React.FC = () => {
     }
   };
 
-  // 检查是否显示管理面板按钮
+  // 檢查是否顯示管理面板按鈕
   const showAdminPanel =
     authInfo?.role === 'owner' || authInfo?.role === 'admin';
 
-  // 检查是否显示修改密码按钮
+  // 檢查是否顯示修改密碼按鈕
   const showChangePassword =
     authInfo?.role !== 'owner' && storageType !== 'localstorage';
 
-  // 角色中文映射
+  // 角色中文對應
   const getRoleText = (role?: string) => {
     switch (role) {
       case 'owner':
-        return '站长';
+        return '站長';
       case 'admin':
-        return '管理员';
+        return '管理員';
       case 'user':
-        return '用户';
+        return '用戶';
       default:
         return '';
     }
@@ -313,7 +313,7 @@ export const UserMenu: React.FC = () => {
   // 菜单面板内容
   const menuPanel = (
     <>
-      {/* 背景遮罩 - 普通菜单无需模糊 */}
+      {/* 背景遮罩 - 一般選單無需模糊 */}
       <div
         className='fixed inset-0 bg-transparent z-[1000]'
         onClick={handleCloseMenu}
@@ -321,12 +321,12 @@ export const UserMenu: React.FC = () => {
 
       {/* 菜单面板 */}
       <div className='fixed top-14 right-4 w-56 bg-white dark:bg-gray-900 rounded-lg shadow-xl z-[1001] border border-gray-200/50 dark:border-gray-700/50 overflow-hidden select-none'>
-        {/* 用户信息区域 */}
+        {/* 使用者資訊區域 */}
         <div className='px-3 py-2.5 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-gray-50 to-gray-100/50 dark:from-gray-800 dark:to-gray-800/50'>
           <div className='space-y-1'>
             <div className='flex items-center justify-between'>
               <span className='text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider'>
-                当前用户
+                當前用戶
               </span>
               <span
                 className={`inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium ${
@@ -345,22 +345,22 @@ export const UserMenu: React.FC = () => {
                 {authInfo?.username || 'default'}
               </div>
               <div className='text-[10px] text-gray-400 dark:text-gray-500'>
-                数据存储：
-                {storageType === 'localstorage' ? '本地' : storageType}
+                資料儲存：
+                {storageType === 'localstorage' ? '本機' : storageType}
               </div>
             </div>
           </div>
         </div>
 
-        {/* 菜单项 */}
+        {/* 選單項目 */}
         <div className='py-1'>
-          {/* 设置按钮 */}
+          {/* 設定按鈕 */}
           <button
             onClick={handleSettings}
             className='w-full px-3 py-2 text-left flex items-center gap-2.5 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-sm'
           >
             <Settings className='w-4 h-4 text-gray-500 dark:text-gray-400' />
-            <span className='font-medium'>设置</span>
+            <span className='font-medium'>設定</span>
           </button>
 
           {/* 管理面板按钮 */}
@@ -381,11 +381,11 @@ export const UserMenu: React.FC = () => {
               className='w-full px-3 py-2 text-left flex items-center gap-2.5 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-sm'
             >
               <KeyRound className='w-4 h-4 text-gray-500 dark:text-gray-400' />
-              <span className='font-medium'>修改密码</span>
+              <span className='font-medium'>修改密碼</span>
             </button>
           )}
 
-          {/* 分割线 */}
+          {/* 分隔線 */}
           <div className='my-1 border-t border-gray-200 dark:border-gray-700'></div>
 
           {/* 登出按钮 */}
@@ -400,7 +400,7 @@ export const UserMenu: React.FC = () => {
           {/* 分割线 */}
           <div className='my-1 border-t border-gray-200 dark:border-gray-700'></div>
 
-          {/* 版本信息 */}
+          {/* 版本資訊 */}
           <button
             onClick={() =>
               window.open('https://github.com/senshinya/MoonTV', '_blank')
@@ -429,7 +429,7 @@ export const UserMenu: React.FC = () => {
     </>
   );
 
-  // 设置面板内容
+  // 設定面板內容
   const settingsPanel = (
     <>
       {/* 背景遮罩 */}
@@ -438,18 +438,18 @@ export const UserMenu: React.FC = () => {
         onClick={handleCloseSettings}
       />
 
-      {/* 设置面板 */}
+      {/* 設定面板 */}
       <div className='fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md bg-white dark:bg-gray-900 rounded-xl shadow-xl z-[1001] p-6'>
-        {/* 标题栏 */}
+        {/* 標題列 */}
         <div className='flex items-center justify-between mb-6'>
           <div className='flex items-center gap-3'>
             <h3 className='text-xl font-bold text-gray-800 dark:text-gray-200'>
-              本地设置
+              本機設定
             </h3>
             <button
               onClick={handleResetSettings}
               className='px-2 py-1 text-xs text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 border border-red-200 hover:border-red-300 dark:border-red-800 dark:hover:border-red-700 hover:bg-red-50 dark:hover:bg-red-900/20 rounded transition-colors'
-              title='重置为默认设置'
+              title='重置為預設設定'
             >
               重置
             </button>
@@ -457,22 +457,22 @@ export const UserMenu: React.FC = () => {
           <button
             onClick={handleCloseSettings}
             className='w-8 h-8 p-1 rounded-full flex items-center justify-center text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors'
-            aria-label='Close'
+            aria-label='關閉'
           >
             <X className='w-full h-full' />
           </button>
         </div>
 
-        {/* 设置项 */}
+        {/* 設定項目 */}
         <div className='space-y-6'>
-          {/* 默认聚合搜索结果 */}
+          {/* 預設聚合搜尋結果 */}
           <div className='flex items-center justify-between'>
             <div>
               <h4 className='text-sm font-medium text-gray-700 dark:text-gray-300'>
-                默认聚合搜索结果
+                預設聚合搜尋結果
               </h4>
               <p className='text-xs text-gray-500 dark:text-gray-400 mt-1'>
-                搜索时默认按标题和年份聚合显示结果
+                搜尋時預設按標題與年份聚合顯示結果
               </p>
             </div>
             <label className='flex items-center cursor-pointer'>
@@ -489,14 +489,14 @@ export const UserMenu: React.FC = () => {
             </label>
           </div>
 
-          {/* 优选和测速 */}
+          {/* 優選與測速 */}
           <div className='flex items-center justify-between'>
             <div>
               <h4 className='text-sm font-medium text-gray-700 dark:text-gray-300'>
-                启用优选和测速
+                啟用優選與測速
               </h4>
               <p className='text-xs text-gray-500 dark:text-gray-400 mt-1'>
-                如出现播放器劫持问题可关闭
+                若出現播放器劫持問題可關閉
               </p>
             </div>
             <label className='flex items-center cursor-pointer'>
@@ -513,17 +513,17 @@ export const UserMenu: React.FC = () => {
             </label>
           </div>
 
-          {/* 分割线 */}
+          {/* 分隔線 */}
           <div className='border-t border-gray-200 dark:border-gray-700'></div>
 
-          {/* 豆瓣代理开关 */}
+          {/* 豆瓣代理開關 */}
           <div className='flex items-center justify-between'>
             <div>
               <h4 className='text-sm font-medium text-gray-700 dark:text-gray-300'>
-                启用豆瓣代理
+                啟用豆瓣代理
               </h4>
               <p className='text-xs text-gray-500 dark:text-gray-400 mt-1'>
-                启用后，豆瓣数据将通过代理服务器获取
+                啟用後，豆瓣資料將透過代理伺服器取得
               </p>
             </div>
             <label className='flex items-center cursor-pointer'>
@@ -540,14 +540,14 @@ export const UserMenu: React.FC = () => {
             </label>
           </div>
 
-          {/* 豆瓣代理地址设置 */}
+          {/* 豆瓣代理位址設定 */}
           <div className='space-y-3'>
             <div>
               <h4 className='text-sm font-medium text-gray-700 dark:text-gray-300'>
-                豆瓣代理地址
+                豆瓣代理位址
               </h4>
               <p className='text-xs text-gray-500 dark:text-gray-400 mt-1'>
-                仅在启用豆瓣代理时生效，留空则使用服务器 API
+                僅在啟用豆瓣代理時生效，留空則使用伺服端 API
               </p>
             </div>
             <input
@@ -564,17 +564,17 @@ export const UserMenu: React.FC = () => {
             />
           </div>
 
-          {/* 分割线 */}
+          {/* 分隔線 */}
           <div className='border-t border-gray-200 dark:border-gray-700'></div>
 
-          {/* 图片代理开关 */}
+          {/* 圖片代理開關 */}
           <div className='flex items-center justify-between'>
             <div>
               <h4 className='text-sm font-medium text-gray-700 dark:text-gray-300'>
-                启用图片代理
+                啟用圖片代理
               </h4>
               <p className='text-xs text-gray-500 dark:text-gray-400 mt-1'>
-                启用后，所有图片加载将通过代理服务器
+                啟用後，所有圖片載入將透過代理伺服器
               </p>
             </div>
             <label className='flex items-center cursor-pointer'>
@@ -591,14 +591,14 @@ export const UserMenu: React.FC = () => {
             </label>
           </div>
 
-          {/* 图片代理地址设置 */}
+          {/* 圖片代理位址設定 */}
           <div className='space-y-3'>
             <div>
               <h4 className='text-sm font-medium text-gray-700 dark:text-gray-300'>
-                图片代理地址
+                圖片代理位址
               </h4>
               <p className='text-xs text-gray-500 dark:text-gray-400 mt-1'>
-                仅在启用图片代理时生效
+                僅在啟用圖片代理時生效
               </p>
             </div>
             <input
@@ -616,17 +616,17 @@ export const UserMenu: React.FC = () => {
           </div>
         </div>
 
-        {/* 底部说明 */}
+        {/* 底部說明 */}
         <div className='mt-6 pt-4 border-t border-gray-200 dark:border-gray-700'>
           <p className='text-xs text-gray-500 dark:text-gray-400 text-center'>
-            这些设置保存在本地浏览器中
+            這些設定保存在本機瀏覽器中
           </p>
         </div>
       </div>
     </>
   );
 
-  // 修改密码面板内容
+  // 修改密碼面板內容
   const changePasswordPanel = (
     <>
       {/* 背景遮罩 */}
@@ -635,55 +635,55 @@ export const UserMenu: React.FC = () => {
         onClick={handleCloseChangePassword}
       />
 
-      {/* 修改密码面板 */}
+      {/* 修改密碼面板 */}
       <div className='fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md bg-white dark:bg-gray-900 rounded-xl shadow-xl z-[1001] p-6'>
-        {/* 标题栏 */}
+        {/* 標題列 */}
         <div className='flex items-center justify-between mb-6'>
           <h3 className='text-xl font-bold text-gray-800 dark:text-gray-200'>
-            修改密码
+            修改密碼
           </h3>
           <button
             onClick={handleCloseChangePassword}
             className='w-8 h-8 p-1 rounded-full flex items-center justify-center text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors'
-            aria-label='Close'
+            aria-label='關閉'
           >
             <X className='w-full h-full' />
           </button>
         </div>
 
-        {/* 表单 */}
+        {/* 表單 */}
         <div className='space-y-4'>
-          {/* 新密码输入 */}
+          {/* 新密碼輸入 */}
           <div>
             <label className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2'>
-              新密码
+              新密碼
             </label>
             <input
               type='password'
               className='w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-colors bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400'
-              placeholder='请输入新密码'
+              placeholder='請輸入新密碼'
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
               disabled={passwordLoading}
             />
           </div>
 
-          {/* 确认密码输入 */}
+          {/* 確認密碼輸入 */}
           <div>
             <label className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2'>
-              确认密码
+              確認密碼
             </label>
             <input
               type='password'
               className='w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-colors bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400'
-              placeholder='请再次输入新密码'
+              placeholder='請再次輸入新密碼'
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               disabled={passwordLoading}
             />
           </div>
 
-          {/* 错误信息 */}
+          {/* 錯誤資訊 */}
           {passwordError && (
             <div className='text-red-500 text-sm bg-red-50 dark:bg-red-900/20 p-3 rounded-md border border-red-200 dark:border-red-800'>
               {passwordError}
@@ -691,7 +691,7 @@ export const UserMenu: React.FC = () => {
           )}
         </div>
 
-        {/* 操作按钮 */}
+        {/* 操作按鈕 */}
         <div className='flex gap-3 mt-6 pt-4 border-t border-gray-200 dark:border-gray-700'>
           <button
             onClick={handleCloseChangePassword}
@@ -705,14 +705,14 @@ export const UserMenu: React.FC = () => {
             className='flex-1 px-4 py-2 text-sm font-medium text-white bg-green-600 hover:bg-green-700 dark:bg-green-700 dark:hover:bg-green-600 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed'
             disabled={passwordLoading || !newPassword || !confirmPassword}
           >
-            {passwordLoading ? '修改中...' : '确认修改'}
+            {passwordLoading ? '修改中...' : '確認修改'}
           </button>
         </div>
 
-        {/* 底部说明 */}
+        {/* 底部說明 */}
         <div className='mt-4 pt-4 border-t border-gray-200 dark:border-gray-700'>
           <p className='text-xs text-gray-500 dark:text-gray-400 text-center'>
-            修改密码后需要重新登录
+            修改密碼後需要重新登入
           </p>
         </div>
       </div>
@@ -734,13 +734,13 @@ export const UserMenu: React.FC = () => {
         )}
       </div>
 
-      {/* 使用 Portal 将菜单面板渲染到 document.body */}
+      {/* 使用 Portal 將選單面板渲染到 document.body */}
       {isOpen && mounted && createPortal(menuPanel, document.body)}
 
-      {/* 使用 Portal 将设置面板渲染到 document.body */}
+      {/* 使用 Portal 將設定面板渲染到 document.body */}
       {isSettingsOpen && mounted && createPortal(settingsPanel, document.body)}
 
-      {/* 使用 Portal 将修改密码面板渲染到 document.body */}
+      {/* 使用 Portal 將修改密碼面板渲染到 document.body */}
       {isChangePasswordOpen &&
         mounted &&
         createPortal(changePasswordPanel, document.body)}
